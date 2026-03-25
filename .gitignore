@@ -1,0 +1,21 @@
+# Secrets and credentials (never commit)
+.env
+.secrets/
+credentials.json
+token.json
+
+# Virtual environment
+.venv/
+
+# OS / local editor
+.DS_Store
+**/.DS_Store
+.obsidian/
+
+# Large / personal working files (keep locally; not needed for Docker deploy)
+Stage/
+
+# Next.js build artifacts inside chatgpt-clone (Docker rebuilds; local npm leaves these)
+chatgpt-clone/node_modules/
+chatgpt-clone/.next/
+chatgpt-clone/out/

@@ -1,0 +1,12 @@
+---
+description: Google Slides local image conventions
+alwaysApply: true
+---
+
+# Google Slides Images
+
+- Store all local slide images in `slides/assets/`
+- Use kebab-case filenames only, e.g. `ai-competence-matrix.png`
+- In YAML, reference local images from `slides/` using paths like `assets/ai-competence-matrix.png`
+- Do not place slide images in the `slides/` root
+- Do not use spaces, uppercase letters, or ad-hoc names for local slide images

@@ -1,0 +1,8 @@
+# Append: full-screen AI Competence Matrix image only
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: ""
+    image: "assets/ai-competence-matrix.png"
+    fullscreen: true

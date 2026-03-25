@@ -1,0 +1,51 @@
+# Append-only: 4 AI Competence Matrix slides
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/ai_competence_matrix_append.yaml --update PRESENTATION_ID
+
+title: "AI Competence Matrix"
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "L3: The AI Consumer"
+    content: |
+      Keyword: Chatting
+      
+      • Where most people are today
+      • Behaviour: Use AI as a smarter Google or patient assistant — translate docs, polish emails, search knowledge
+      • Tools: ChatGPT, Claude, Gemini (web)
+      • Limitation: Highly dependent on luck. If AI is wrong, you often don’t know what to do besides Regenerate. Your AI ability is limited by the model’s "mood" and baseline.
+      • Mindset: Treat it as a consultant.
+
+  - title: "L4: The AI Tinkerer / Vibe Coder"
+    content: |
+      Keyword: One-off
+      
+      • Entered via Cursor, Replit, Manus, Lovable, Google AI Studio, etc. Noisy stage, easy to overestimate yourself.
+      • Behaviour: Use natural language to make AI write code — build websites, scripts, or apps. Solve concrete, single-point pain points.
+      • Tools: Cursor, v0, Bolt, simple scripts
+      • Limitation: Happy Path works; once you hit errors (Edge Cases), deployment, or slightly complex needs, the system breaks. Generated code is hard to maintain and iterate — one-off toys.
+      • Mindset: Treat it as outsourced labour.
+
+  - title: "L5: The AI Builder"
+    content: |
+      Keywords: Reliability & Iteration
+      
+      The line between hobbyist and professional. The workplace needs stable delivery, not "roughly works".
+      
+      • Behaviour: Build workflows (not just demos). Automate high-value, high-risk work with know-how to ensure accuracy. Actually improve your work with AI.
+      • Core capabilities:
+        - Context Engineering: right amount of context — no information loss, no hallucination
+        - Evaluation: define task goals, quantify solution quality, auto-monitor
+        - Iterative Mindset: refine via prompt changes, step-splitting until production-ready
+      • Mindset: Treat it as a logic engine; know its limits clearly.
+
+  - title: "L6: The AI Architect"
+    content: |
+      Keywords: Orchestration & Integration
+      
+      Top tier. You design systems instead of chasing the strongest model + tool.
+      
+      • Behaviour: Orchestrate multiple specialised models (e.g. one for analysis, another for creativity). Build systems that go beyond the Context Wall, integrate personal data, and proactively monitor the world — a "digital twin".
+      • Core capabilities:
+        - System Resilience: overcome brittle prompts and single-call limits; long-chain tasks; stable across model updates
+        - Contextual Architecture: dynamic data flows — AI taps notes, chats, KB in real time
+      • Mindset: "Building what you can’t buy." Fill gaps left by giants — your unique OS.

@@ -1,0 +1,29 @@
+# Why Cursor and AI/LLM tools rely on Markdown — 2 slides
+# Append to deck 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/why_markdown_append.yaml --update 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Why Cursor and AI Tools Depend on Markdown (1/2)"
+    content: |
+      • Plain text with minimal syntax — LLMs can parse and generate it without complex parsers. Structure is obvious from #, *, -, ```
+
+      • Low token overhead — no XML tags or HTML markup; every character carries meaning. Cheaper to process and faster to stream
+
+      • Human-readable in raw form — no need to "render" to understand. Works in terminals, editors, chat UIs, and version control diffs
+
+      • Abundant in training data — GitHub READMEs, docs, Jupyter notebooks, blog posts. LLMs have seen vast amounts of Markdown and learned its conventions
+
+      • Code blocks with language hints — ```python, ```bash — help both humans and AI identify context, enabling better code generation and tool invocation
+
+  - title: "Why Cursor and AI Tools Depend on Markdown (2/2)"
+    content: |
+      • Structured yet flexible — headers, lists, tables give organization; free-form prose stays natural. Enough structure to guide the model, not so much that it gets lost
+
+      • Universal and tool-friendly — Cursor rules (.mdc), skills (SKILL.md), prompts, and docs all use Markdown. One format across config, instructions, and output
+
+      • Git-friendly — diffs are readable; teams can review and merge changes. No binary blobs or opaque formats
+
+      • Renders everywhere — chat UIs, VS Code, web, Slack, Notion. Markdown has become the default "rich text" of the developer and AI world

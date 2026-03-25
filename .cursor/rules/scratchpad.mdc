@@ -1,0 +1,144 @@
+---
+description: Task planning and progress tracking; plan here and update with [X] / [ ] as you complete subtasks
+alwaysApply: true
+---
+
+# Scratchpad
+
+When you get a new task, plan here and track progress with `[X]` / `[ ]`. Update as you complete subtasks and refer to it when planning next steps.
+
+## FastAPI minimal hello (completed)
+- [X] `main.py` — GET `/hello/{input}` → `{"message": "Hello, World <input>"}`
+- [X] Dev: `uvicorn main:app --reload` on http://127.0.0.1:8000
+
+## FastAPI AI Builder chat proxy (completed)
+- [X] POST `/v1/chat/completions` and POST `/chat` — forward to `AI_BUILDER_BASE_URL` + `/v1/chat/completions` with Bearer `AI_BUILDER_TOKEN`; default `model` `gpt-5`; query string (e.g. `debug`) forwarded; streaming supported
+- [X] `.env` gitignored; `httpx` in requirements
+
+## VerifyVASP FATF oVASPs Content (completed)
+- [X] LinkedIn post draft
+- [X] News article draft (VerifyVASP style)
+- [X] Exported to VerifyVASP_oVASPs_Content.docx with 3 images
+
+## Certificate of Appreciation Lab (completed)
+- [X] Created full Lab - Certificate of Appreciation Automation (Student Instructions).md
+- Saved to `/Users/roychung/Cursor Workspace/Unlocking Enterprise AI 2026/`
+- No submission/deliverable section (per user request)
+
+## Google Slides from YAML (completed)
+- [X] tools/slides_to_google.py - YAML to Google Slides in Drive
+- [X] Image upload to Drive + link in slides
+- [X] Sample YAML, SLIDES_SETUP.md, tools.mdc updated
+- [X] TITLE_AND_TWO_COLUMNS layout (Method A: content left, image right)
+
+## Lesson 2 Review Questions (completed)
+- [X] Regenerated per user spec: 4 MC options, order + why-study (very hard), 5 which-layer, 3 per layer (2 MC + 1 T/F), 3 for p.52–57
+- [X] Saved to Stage/Lesson_2_Review_Questions.md
+
+## Lesson 3 LLM Teaching Slides (completed)
+- [X] Added 33 content slides + 7 title-only transitions (~90s/slide formula)
+- [X] Sections: How LLMs work, Common pitfalls, Best way ChatGPT, Use GenAI effectively, Different from humans, Train LLM, Open-source
+- [X] Appended to deck 1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY
+
+## Lesson 3 Clean Rebuild (completed)
+- [X] Fixed Google Slides generator to use canonical layouts and avoid placeholder overlap
+- [X] Applied body text line spacing = 1.15 for generated slides
+- [X] Created richer self-study source deck at `slides/unlocking_enterprise_ai_lesson3_clean.yaml`
+- [X] Generated clean review deck `1AUccMEEF4Uou4eKq0ihi3gGNVWi_I01SIbdIuIxNTtc`
+
+## Lesson 3 Clean Rebuild v2 (completed)
+- [X] Kept first 10 slides unchanged in clean source
+- [X] Rewrote post-slide-10 content into shorter phrase-based style
+- [X] Updated generator body font target to 14 and kept line spacing 1.15
+- [X] Forced explicit canonical `TITLE_ONLY` handling before template layout-name matching
+- [X] Generated revised review deck `1HtMIwHAGIEiU6Za73dPHX6g3NKcKPS4b1WmJV0a3jHo`
+
+## Lesson 3 Clean Rebuild v3 (completed)
+- [X] Added automatic body-down shift when long titles wrap
+- [X] Replaced section divider generation with blank-slide + custom title to avoid template `Title only` quirks
+- [X] Verified no `Click to add...` placeholder residue via Slides API
+- [X] Generated review deck `1QMIyuGuO-QS-v6KUmUJ_2bnYuToxSmAp8gUsqyPoF2o`
+
+## Lesson 3 Title-Only Fix (completed)
+- [X] Inspected template layouts and found canonical `TITLE_ONLY` uses `CENTERED_TITLE`
+- [X] Generator now maps title placeholders from actual template layout metadata instead of assuming `TITLE`
+- [X] Generated review deck `1FIfjtoSH8q7nwMnOs58pD9gLFzVXW1butdc-2KroqFM`
+
+## Lesson 3 Final Roll-In (completed)
+- [X] Rebuilt original deck `1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY` from latest clean source
+- [X] Deleted clean review decks after roll-in
+- [X] Removed local clean source file after use
+
+## Slides Image Rule Tightening (completed)
+- [X] Added always-apply rule for local slide images in `.cursor/rules/slides-images.mdc`
+- [X] Updated docs and lessons to require `slides/assets/` + kebab-case naming
+- [X] Enforced the rule in `tools/slides_to_google.py`
+- [X] Moved matrix image to `slides/assets/ai-competence-matrix.png` and updated YAML references
+
+## Lesson 62-64 Slide Add-on
+- [X] Read Lesson 62-64 source notes from `AI Builders`
+- [X] Draft 3 teaching slides with enough context for after-class reading
+- [X] Append slides to `slides/unlocking_enterprise_ai_lesson3.yaml`
+- [X] Update deck `1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY`
+
+## Lesson 1 PDF Pages 2-5 Append (completed)
+- [X] Read `Stage/AI时代编程基础 Lesson 1.pdf` pages 2-5 and `AI时代编程基础 Lesson 1 Notes.md`
+- [X] Draft 4 English slides with phrase-based bullets and enough self-study context
+- [X] Create append-only YAML at `slides/lesson1_pages_2_5_append.yaml`
+- [X] Append the 4 slides to deck `1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY`
+
+## Lesson 2 Full Slide Deck Append
+- [X] Read `AI时代编程基础 Lesson 2 Notes.md`
+- [X] Design an English slide flow for the full lesson
+- [X] Create append-only YAML for Lesson 2
+- [X] Append Lesson 2 slides to deck `1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY`
+
+## Lesson 4 Full Slide Deck Append
+- [X] Read `AI时代编程基础 Lesson 4 Notes.md`
+- [X] Design an English slide flow for the full lesson
+- [X] Create append-only YAML for Lesson 4
+- [X] Append Lesson 4 slides to deck `1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY`
+
+## Superlinear Extract – Ch2 L4 (completed)
+- [X] 第四课：拓展工具：引入搜索 / 爬虫实现 Access Web → `Stage/Superlinear_Extract_第四课拓展工具引入搜索_爬虫实现_Access_Web/` (text only)
+
+## Superlinear Extract – Ch3 引言 (completed)
+- [X] 第三章 引言：面向 Agentic AI 产品形态的思考与技术架构 → `Stage/Superlinear_Extract_第三章_引言面向_Agentic_AI_产品形态的思考与技术架构/` (text only)
+
+## Superlinear Extract – Ch3 L1 (completed)
+- [X] 第一课：产品形态：从「工具」到「抽象组合」的范式转变 → `Stage/Superlinear_Extract_第一课产品形态从工具到抽象组合的范式转变/` (text only)
+
+## Superlinear Extract – Ch3 L2 (completed)
+- [X] 第二课：四大关键技术组件：如何系统构建 Agentic AI → `Stage/Superlinear_Extract_第二课四大关键技术组件如何系统构建_Agentic_AI/` (text only)
+
+## Superlinear Extract – Ch3 L3 (completed)
+- [X] 第三课：为什么学习Agentic AI的第一步是忘记所有框架？ → `Stage/Superlinear_Extract_第三课为什么学习Agentic_AI的第一步是忘记所有框架/` (text only)
+
+## AI Coding L3–L4 Slides (completed)
+- [X] Created YAML from Superlinear Extract L3 (报错耐受力) + L4 (逻辑描述力)
+- [X] ~5 min per lesson, phrase-based English bullets
+- [X] Target deck 12o2ZIiy... has layout/master mismatch; generated new deck instead
+- [X] New deck: `18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI`
+- [ ] User can copy slides from new deck into target deck if needed
+
+## Agentic AI Chapter 1 Slides (completed)
+- [X] Created YAML from Stage/Agentic AI Chapter 1 (5 lessons)
+- [X] All English, phrase-based bullets
+- [X] Appended to deck `18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI`
+
+## Lab 4 – 5 Cursor Tasks (Build with Coding Agent and Rules) (completed)
+- [X] Created 5 tasks: CER debugging, 3C file organizer, multi-file scrape pipeline, rules-as-context comparison, full 3C+CER loop
+- [X] Each task requires agentic AI and consolidating learnings to rules
+- [X] Saved to Stage/Lab_4_5_Cursor_Tasks_Build_with_Coding_Agent_and_Rules.md
+
+## Lesson 4 Opening Slide Caption
+- [X] Review prior lesson decks for recurring course message
+- [X] Refine course caption options for final lesson opening slide
+
+## ChatGPT-style Next.js UI (completed)
+- [X] `chatgpt-clone/` — two columns: conversations (localStorage) + chat; default model `grok-4-fast`; `POST /api/chat` proxies to FastAPI `CHAT_PROXY_URL` (default `http://127.0.0.1:8002/v1/chat/completions`); streaming SSE + Markdown
+- [X] Dev: run FastAPI proxy (`uvicorn main:app … --port 8002`) + `cd chatgpt-clone && npm run dev` → http://localhost:3000
+- [X] Auto title via LLM from first user message (`lib/generate-title.ts`); fallback to truncated first line on failure
+- [X] Edit user messages: hover **Edit** → **Save & resend** truncates history after that message and streams a new reply; editing the only user message regenerates the title
+- [X] Assistant Markdown → rendered DOM (GFM tables, emphasis, etc.) + `rehype-raw` + `rehype-sanitize` for safe inline HTML in replies
+- [X] All chat turns → FastAPI `/v1/chat/agent` (model chooses tools); title `POST /v1/chat/completions`; Next static export in `chatgpt-clone/out` mounted at `/` when present; Dockerfile + `.dockerignore` for ai-builders.space deploy

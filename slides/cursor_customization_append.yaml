@@ -1,0 +1,61 @@
+# Cursor customization: Rules, Skills, MCP (updated from cursor.com/learn/customizing-agents)
+# Replaces outdated .cursorrules-only content. Append to deck 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/cursor_customization_append.yaml --update 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Customizing Cursor Agents — Two Layers"
+    content: |
+      • Agents are intelligent by default but do not know your team's conventions, preferred tools, or business context
+
+      • Customization maps to onboarding a teammate: rules for what they should always know, skills for specialized knowledge they pull in when relevant
+
+      • Rules: static context, included at the start of every conversation
+
+      • Skills: dynamic context, loaded only when the agent decides the task is relevant
+
+      • This keeps context efficient: rules are always-on, skills consume context only when invoked
+
+  - title: "Rules — Static Context"
+    content: |
+      • Rules live in `.cursor/rules/` as markdown files, visible to the agent at the start of every conversation
+
+      • Best for: build/test commands, code conventions, pointers to canonical examples, guardrails (files not to modify, patterns to avoid)
+
+      • Keep rules short and specific. Point to examples rather than copying whole style guides — use a linter for style instead
+
+      • Add rules only when the agent makes the same mistake repeatedly. Check rules into git so the whole team benefits
+
+      • Avoid: copying entire style guides, documenting every command (agent already knows common tools)
+
+  - title: "Skills — Dynamic, On-Demand Context"
+    content: |
+      • Skills extend agents with specialized knowledge and workflows. Defined in `SKILL.md` with a description and steps
+
+      • Unlike rules, skills are loaded dynamically — the agent decides when to use them based on the task
+
+      • Use when: deploy workflows, custom scripts, domain knowledge the agent should pull in only when asked
+
+      • Example: a "Deploy to staging" skill with steps (build, test, deploy, verify) — agent invokes it when the user says "deploy"
+
+      • You can also trigger skills with / slash commands, e.g. `/pr` to commit, push, and open a pull request
+
+  - title: "Rules vs Skills — When to Use Which"
+    content: |
+      • Rules: every conversation; always-on conventions; always uses context. Best for: what the agent should always know
+
+      • Skills: only when relevant; specialized workflows; only uses full context when invoked. Best for: what the agent can do when asked
+
+      • Over-engineering rules is a common failure — too many rules consume context and can confuse the agent. Put occasional needs in a skill instead
+
+  - title: "MCP and CLI — Connecting to External Tools"
+    content: |
+      • MCP (Model Context Protocol) lets the agent connect to external tools and pull in relevant context on demand
+
+      • Examples: Slack (read/post messages), Datadog (logs), Sentry (errors), databases (query data), Figma (design tokens)
+
+      • Beyond MCP: the agent can run any CLI tool installed in your terminal — gh, aws, kubectl, docker — without extra setup
+
+      • Use a rule to point the agent at tools: "Use gh for all GitHub operations" or "Use aws s3 for file storage"

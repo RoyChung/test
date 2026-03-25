@@ -1,0 +1,176 @@
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Lesson 4 — From Vague Requests to Safe Instructions"
+    layout: TITLE_ONLY
+
+  - title: "What This Lesson Is Really About"
+    content: |
+      • Some AI failures are obvious because the program crashes and prints red errors
+
+      • A more dangerous failure is when the script runs smoothly, reports no error, and still produces the wrong outcome
+
+      • This lesson uses a photo-organizing case to show why intuitive, vague instructions are not enough
+
+      • The real skill is turning fuzzy intent into logic that AI cannot misread
+
+  - title: "The Photo Organizer Case"
+    content: |
+      • Imagine a messy folder with nested subfolders, mixed file types, duplicate images, and same-name conflicts
+
+      • Example conflict: two files are both called `sunset.jpg`, but they are actually different photos
+
+      • Example duplicate: two files have different names, but exactly the same image content
+
+      • Non-image files such as `.txt` and `.md` are also mixed into the folder and should not be handled as photos
+
+      • This is a realistic builder scenario because the data is messy, ambiguous, and easy to damage
+
+  - title: "The Dangerous Vague Prompt"
+    content: |
+      • A beginner might say: “Write a script to flatten this folder and put all photos into one new folder”
+
+      • The instruction sounds reasonable, but it leaves too many decisions unstated
+
+      • It does not define what counts as a duplicate, how to handle filename collisions, or whether overwriting is allowed
+
+      • It also does not say which file types should be included or excluded
+
+      • In AI work, missing logic is not neutral; AI will fill the gaps with its own assumptions
+
+  - title: "When Code Is Correct but the Product Is Wrong"
+    content: |
+      • The generated script may run with no error at all, which creates a false sense of success
+
+      • But one `sunset.jpg` may silently overwrite the other because the system assumes same name means same file
+
+      • The terminal stays calm while your data is already damaged
+
+      • This is the key distinction: code correctness is not the same as product correctness
+
+      • Builders must care about outcome safety, not only whether the script executed
+
+  - title: "The Real Problem: Hidden Assumptions"
+    layout: TITLE_ONLY
+
+  - title: "Assumption Mismatch #1: Identity"
+    content: |
+      • A human may think: different content means different photos, even if the filenames match
+
+      • AI may think: same filename probably means the same file identity
+
+      • If that assumption is left implicit, AI may choose a destructive shortcut that feels “efficient”
+
+      • Requirement writing is not just description; it is alignment of definitions
+
+  - title: "Assumption Mismatch #2: Conflict Handling"
+    content: |
+      • A human may think overwriting is dangerous because data can be lost permanently
+
+      • AI may think overwriting is acceptable if two items appear to represent the same logical file
+
+      • The conflict is not mainly about intelligence; it is about unstated policy
+
+      • Good builder prompts turn hidden assumptions into explicit rules before execution begins
+
+  - title: "3C Is a Contract, Not a Writing Exercise"
+    content: |
+      • When the prompt is vague, do not rush to patch the code first
+
+      • Fix the logic definition first, because the script is only executing the rules you gave it
+
+      • 3C helps convert fuzzy wishes into a concrete operating contract for AI
+
+      • The goal is not prettier wording; the goal is fewer wrong decisions
+
+  - title: "3C Step 1: Context"
+    content: |
+      • Context defines the overall mission and the highest-priority principle
+
+      • In this case: build a local photo organizer where data safety is more important than convenience
+
+      • A strong principle might be: better to do nothing than to do the wrong thing
+
+      • This top-level priority matters because it guides AI when trade-offs appear later
+
+  - title: "3C Step 2: Components"
+    content: |
+      • Components break the large task into operational stages AI can reason about
+
+      • Example stages: scan the source directory recursively, identify duplicates, perform file operations, and generate a report
+
+      • Breaking the task down reduces ambiguity and makes review easier
+
+      • A builder does not only ask for a result; a builder defines the structure of the workflow
+
+  - title: "3C Step 3: Criteria"
+    content: |
+      • Criteria is the most important part because this is where hidden assumptions become explicit policy
+
+      • Rule 1: determine duplicates by file content, not by filename
+
+      • Rule 2: never overwrite same-name files; rename them safely instead
+
+      • Rule 3: default to copy mode, not move mode, until the result is verified
+
+      • Rule 4: only process image formats such as `.jpg` and `.png`; ignore everything else
+
+  - title: "What a Safer AI Solution Looks Like"
+    content: |
+      • With clear 3C rules, AI is more likely to use content hashing instead of filename matching
+
+      • It may preserve metadata, avoid destructive moves, and include safe renaming behavior
+
+      • The point is not that AI magically became smarter
+
+      • The point is that the decision space became constrained by logic instead of guesswork
+
+  - title: "Do Not Trust Your Eyes Alone"
+    layout: TITLE_ONLY
+
+  - title: "Acceptance Means Verification, Not Just Execution"
+    content: |
+      • A script that finishes is not automatically a script that succeeded
+
+      • Builders need objective acceptance checks, especially for file operations and data transformations
+
+      • Ask AI to produce counts that let you reconcile the workflow mathematically
+
+      • Example formula: input files = output files + duplicates + skipped non-images
+
+      • If the numbers do not match, the script should raise a visible warning instead of pretending success
+
+  - title: "Add a Visual Report for Human Review"
+    content: |
+      • Some tasks are better validated visually than through raw terminal output alone
+
+      • A generated `report.html` can show kept photos on one side and removed duplicates on the other
+
+      • Visual acceptance helps you catch bad duplicate judgments that counts alone may not reveal
+
+      • In AI-native work, verification should combine machine checks and fast human inspection
+
+  - title: "Iteration Is Part of the Method"
+    content: |
+      • Your first 3C draft will often be incomplete, and that is normal
+
+      • If the result exposes a missing rule, treat that as feedback, not failure
+
+      • Go back to the Criteria section, add the missing constraint, and let AI regenerate the solution
+
+      • This is the real programming loop in the AI era: define rules, execute rules, verify outcomes, refine rules
+
+  - title: "Lesson 4 Takeaways"
+    content: |
+      • The most dangerous AI output is often not a crash, but a smooth workflow with a wrong result
+
+      • Hidden assumptions are where many silent failures begin
+
+      • 3C turns vague requests into explicit operational logic AI can follow more safely
+
+      • Acceptance must include verification logic and, when useful, visual review
+
+      • Builder mindset means protecting outcomes, not just producing scripts
+
+      • Homework: write your own 3C prompt for a safe organizer, add one extra constraint, and validate the result with evidence

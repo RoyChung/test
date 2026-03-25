@@ -1,0 +1,37 @@
+# Agentic AI — 3 dedicated explanation slides (Tool calling, Multi-step decision-making, Self-iteration)
+# Append to deck 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/agentic_ai_three_features_explain_append.yaml --update 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Tool Calling — Letting AI Act in the Real World"
+    content: |
+      • Unlike ChatGPT that stays in the dialog, Agentic AI can "step out" and actually do things
+
+      • Before generating text, AI asks: "Is there part of this task I need an external tool for?" If yes, it calls the tool, gets the result, then continues reasoning
+
+      • Examples: calculator for math, web browser for live data, pip for installing libraries, databases, image-processing scripts
+
+      • The more tools you give AI, the more it can reach into the real world — but each tool brings security and permission trade-offs
+
+  - title: "Multi-Step Decision-Making — Try, Observe, Adapt, Retry"
+    content: |
+      • Not turn-based Q&A. Instead: a loop — try an action, observe the result, adjust, try the next step until done
+
+      • If python script fails with ModuleNotFoundError, AI runs pip install and retries without you pasting the error back
+
+      • For data analysis: AI finds bad records, writes a cleanup script, reruns until the chart succeeds
+
+      • For web scraping: AI hits 403, adds headers or simulates clicks, retries — iterates until it works or reaches a limit
+
+  - title: "Self-Iteration — AI Keeps Going Until the Standard Is Met"
+    content: |
+      • AI gets a success criterion (via prompt or config) and does not stop until it meets it
+
+      • Example: "Only report done when all pytest tests pass" — AI writes code, runs tests, fixes failures, reruns, until green
+
+      • Example: "Output must be 1600×900" — AI checks, adjusts, regenerates until the size is correct
+
+      • Some tools let AI write lessons back (e.g. .cursorrules) so it can improve over time

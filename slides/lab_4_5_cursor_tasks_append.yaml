@@ -1,0 +1,41 @@
+# Lab 4–5 — Build with Coding Agent and Rules (3 slides)
+# Append to deck 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/lab_4_5_cursor_tasks_append.yaml --update 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Lab 4 — Build with Coding Agent and Rules"
+    content: |
+      • Time: ~20–30 min free practice
+
+      • Goal: Use Composer to try 3C + CER, then prompt the agent to write learnings into rules
+
+      • 3C (build): Context, Components, Criteria — define the task before coding
+
+      • CER (debug): Context, Error (full message), Request — structure for fixing errors with AI
+
+      • Pick 1–2 tasks. At the end, ask the agent to add learnings to `.cursor/rules/`
+
+  - title: "Task 1: CER — Learn from Errors"
+    content: |
+      • Ask Cursor to write a script that imports pandas (or another lib you don't have)
+
+      • Run it → see ModuleNotFoundError
+
+      • Select the full error text → Add to Chat → say "Fix it"
+
+      • Prompt the coding agent: "Summarize what we learned and add it to `.cursor/rules/` so we can reuse it."
+
+  - title: "Task 2: 3C — Split Name and Export to Excel"
+    content: |
+      • Use `Stage/lab4_sample_data.csv`
+
+      • Task: split the `name` column into `first_name` and `last_name`, then export to Excel
+
+      • Write 3C: Context (goal), Components (steps), Criteria (e.g. handle missing values, output filename)
+
+      • Paste into Composer → ask it to build → if wrong, fix Criteria first, not the code
+
+      • Prompt the agent: "Summarize what we learned and add it to `.cursor/rules/` so we can reuse it."

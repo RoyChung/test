@@ -1,0 +1,49 @@
+# Sample slide definition for slides_to_google.py
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/sample_slides.yaml
+
+title: "Introduction to Compliance"
+
+slides:
+  - title: "What is AML?"
+    content: |
+      Anti-money laundering (AML) refers to laws and regulations
+      designed to prevent criminals from disguising illegally
+      obtained funds as legitimate income.
+      • Customer due diligence
+      • Transaction monitoring
+      • Suspicious activity reporting
+
+  - title: "Key Metrics"
+    table:
+      rows:
+        - ["Year", "Cases", "Value (USD)"]
+        - ["2023", "142", "$1.8M"]
+        - ["2024", "156", "$2.1M"]
+        - ["2025", "171", "Est. $2.4M"]
+
+  - title: "Regulatory Bodies"
+    content: |
+      FATF - Financial Action Task Force
+      FSB - Financial Stability Board
+      BCBS - Basel Committee on Banking Supervision
+      IOSCO - International Organization of Securities Commissions
+
+  # TITLE_AND_TWO_COLUMNS (Method A: content left, image right). Auto-selected when both content + image.
+  - title: "AML Process Flow"
+    layout: TITLE_AND_TWO_COLUMNS
+    content: |
+      Key steps in anti-money laundering:
+      • Customer identification
+      • Risk assessment
+      • Ongoing monitoring
+      • Reporting
+    # Use a public image URL (PNG/JPEG/GIF, <50MB). Local paths are uploaded to Drive.
+    image: "https://www.google.com/images/branding/googlelogo/2x/googlelogo_color_272x92dp.png"
+
+  # Image: use a URL or a local path (relative to this YAML file)
+  # Local images are uploaded to your Drive and linked automatically.
+  # - title: "Process Flow"
+  #   image: "diagram.png"
+  # Or use a URL:
+  # - title: "Framework"
+  #   image: "https://example.com/chart.png"

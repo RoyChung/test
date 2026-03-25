@@ -1,0 +1,110 @@
+---
+description: Python tools (screenshot, LLM, web scraper, search); use Python 3 for batch scripts
+alwaysApply: true
+---
+
+# Tools
+
+All tools are Python 3. **Always run Python via `.venv/bin/python3`** — never use system Python directly.
+
+For batch processing, consult the Python files in `tools/` and write your own script.
+
+**Setup / recreate .venv:** `python3 -m venv .venv` then `.venv/bin/pip install -r requirements.txt`
+
+[NOTE TO CURSOR: If no API key is configured, ignore the Screenshot Verification and LLM sections below.]
+[NOTE TO USER: To enable these features, configure an API key and remove these two lines.]
+
+## Screenshot Verification
+
+1. **Screenshot capture**
+   ```bash
+   .venv/bin/python3 tools/screenshot_utils.py URL [--output OUTPUT] [--width WIDTH] [--height HEIGHT]
+   ```
+
+2. **LLM verification with images**
+   ```bash
+   .venv/bin/python3 tools/llm_api.py --prompt "Your verification question" --provider {openai|anthropic} --image path/to/screenshot.png
+   ```
+
+Example workflow: use `screenshot_utils.take_screenshot_sync` and `llm_api.query_llm` (see `tools/` for APIs).
+
+## LLM
+
+Simple invocation:
+```bash
+.venv/bin/python3 ./tools/llm_api.py --prompt "What is the capital of France?" --provider "anthropic"
+```
+
+Providers (see `tools/llm_api.py` and `.env` for details):
+- OpenAI (default: gpt-5.4)
+- Azure OpenAI (gpt-4o-ms)
+- DeepSeek (deepseek-chat)
+- Anthropic (claude-3-sonnet-20240229)
+- Gemini (gemini-pro)
+- Local LLM (Qwen/Qwen2.5-32B-Instruct-AWQ)
+
+Prefer calling the APIs in `tools/llm_api.py` when you need more control.
+
+## Web scraper
+
+```bash
+.venv/bin/python3 ./tools/web_scraper.py --max-concurrent 3 URL1 URL2 URL3
+```
+Outputs the content of the given URLs. Use for further scraping after search.
+
+## Search engine
+
+```bash
+.venv/bin/python3 ./tools/search_engine.py "your search keywords"
+```
+Output format: `URL:`, `Title:`, `Snippet:` per result. Use `web_scraper.py` to fetch full page content when needed.
+
+## Markdown to PDF
+
+Convert Markdown (with embedded images) to PDF:
+
+```bash
+.venv/bin/python3 ./tools/md_to_pdf.py path/to/file.md [-o output.pdf] [--keep-html]
+```
+
+- **Images**: use `![alt](image.png)` in the md; paths are relative to the md file.
+- **Setup (once):** `.venv/bin/playwright install chromium`
+- **Dependencies:** `markdown`, `playwright` (pip install)
+
+## Google Slides
+
+Convert YAML slide definitions to Google Slides in your Drive:
+
+```bash
+.venv/bin/python3 ./tools/slides_to_google.py slides/my_slides.yaml [-o "Title"] [--update ID] [--template TEMPLATE_ID]
+```
+
+- **YAML**: `slides/` folder for your working files (slide content)
+- **Local images**: must live in `slides/assets/` and use kebab-case filenames such as `ai-competence-matrix.png`
+- **Default template**: `slides/.template` (one line = template ID). Used when no `--template` and no `template:` in YAML. Current: Retro Modern Style `16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU`.
+- **Secrets**: env `SLIDES_CREDENTIALS_PATH`, `~/.config/slides-to-google/`, or `.secrets/` (gitignored)
+- **Images**: use URLs or local paths; local files are uploaded to Drive and linked, and identical local images are reused instead of re-uploaded
+- **Setup (once):** Google Cloud project, enable Slides + Drive API, create OAuth credentials (Desktop), download as `.secrets/credentials.json`. First run opens browser for consent.
+
+## Extract page to Obsidian
+
+Convert browser-captured page content to Obsidian-formatted markdown with local assets:
+
+```bash
+.venv/bin/python3 ./tools/extract_page_to_obsidian.py --input extracted.json [--output-dir Stage] [--include-links-section]
+```
+
+- **Input**: JSON with `title`, `url`, `blocks` (heading/paragraph/image/**code**), `links`, `images`, optional `include_links_section` (default false). Omit `--input` to read from stdin — no need to save JSON to Stage.
+- **Output**: `Stage/Superlinear_Extract_<slug>/` with `index.md`, `src/` (images + files)
+
+**Capture workflow (browser MCP):**
+
+1. **Snapshot** the page (user logged in), identify main content refs: headings, paragraphs, links, imgs.
+2. **Inline links**: For each link in the main content, get `href` via `browser_get_attribute`. When building `paragraph` blocks, embed links inline: replace the link text with `[text](url)`. Example: "在 gift.ai-builders.com 用折扣价购买" becomes `"在 [gift.ai-builders.com](https://gift.ai-builders.com/) 用折扣价购买"`. Do not list links separately unless `include_links_section` is true.
+3. **Images** (goal: display in corresponding position in md when viewing in Obsidian):
+   - **If image has URL**: Get `src` via `browser_get_attribute` on `role: img` or from button's `href`/`data-src`/`data-url`. Add `{"type": "image", "src": "url", "alt": "caption"}` to `blocks` at the correct position. Script downloads to `src/` and outputs `![alt](src/xxx.png)` inline.
+   - **If no URL** (e.g. "View attachment", modal-only): Use `browser_click` to open if needed, then `browser_take_screenshot` with `ref` targeting each image/attachment element (not whole page). Save screenshot to temp path. Add `{"type": "image", "src": "/path/to/screenshot.png", "alt": "caption"}` to `blocks`. Script copies to `src/`.
+   - **Rule**: Always capture images; place image blocks in `blocks` at the correct position between headings/paragraphs so they render inline in Obsidian.
+4. **Code blocks**: Always capture code texts in the content. If the snapshot doesn't expose code, use `browser_search` with queries like `import `, `def `, `Traceback`, etc. to locate and view code blocks (search results include image descriptions with code). Add `{"type": "code", "language": "python|bash|text|...", "text": "..."}` to `blocks` at the correct position.
+5. **File links**: Keep `links` for `.pdf`, `.zip` etc.; script downloads to `src/` using URL basename (e.g. `lesson4_data.zip`). Paragraphs that mention the link text (e.g. "lesson4_data.zip") are auto-converted to `[lesson4_data.zip](src/lesson4_data.zip)`.
+6. Run the script. Pipe JSON via stdin (omit `--input`) to avoid saving JSON to Stage. Images in blocks are output inline as `![alt](src/xxx.png)` at their position.

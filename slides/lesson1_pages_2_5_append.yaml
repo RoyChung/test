@@ -1,0 +1,53 @@
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Programming Has Been Redefined"
+    content: |
+      • In the past, programming meant translating human ideas into machine syntax
+
+      • In the AI era, AI handles much of the syntax, speed, and repetitive implementation
+
+      • The new job is not only to "deliver code", but to deliver the right context and handle the result
+
+      • If you only give AI a vague goal, it may produce something impressive-looking but unusable
+
+      • Builder mindset: less manual typing, more judgment, direction, and result validation
+
+  - title: "Three Core Abilities for Working with AI"
+    content: |
+      • Environment affinity: stop fearing the terminal, folders, and system-level tools
+
+      • Error tolerance: treat red error messages as clues, not proof that you failed
+
+      • Logical description: break vague ideas into structured requirements AI can follow
+
+      • You do not need to master every command or term; you need enough calm and clarity to guide AI well
+
+      • These abilities matter because AI has execution power, but still needs human framing and correction
+
+  - title: "Two Practical Cards: 3C and CER"
+    content: |
+      • Use the 3C card when building: Context, Components, Criteria
+
+      • Context: what you are building, for whom, and why it matters
+
+      • Components: the concrete parts involved, such as inputs, buttons, pages, tables, or workflows
+
+      • Criteria: constraints and success conditions, such as tech stack, style, safety rules, or things AI must not change
+
+      • Use the CER card when debugging: Context, Error, Request
+
+      • Give AI the exact situation, the full error or abnormal result, and what outcome you expected
+
+  - title: "From Passive User to AI Builder"
+    content: |
+      • The goal of learning basic programming is not to become a traditional coder first
+
+      • The real goal is to become someone who can direct AI, stay calm under failure, and express logic clearly
+
+      • In an AI-native workflow, your leverage comes from framing problems and checking outcomes
+
+      • That is the difference between a passive user who waits for answers and a builder who can make systems work
+
+      • This course is a gateway: not mastery of Python syntax, but entry into a more capable way of working with AI

@@ -1,0 +1,31 @@
+---
+description: Project lessons (user-specified and Cursor-learned); update when learning something reusable
+alwaysApply: true
+---
+
+# Lessons
+
+## User specified
+
+- **Always use .venv when running Python**: Use `.venv/bin/python3` or `./.venv/bin/python3` (never system Python). For `pip install`, use `.venv/bin/pip install`, or if `uv` is available: activate .venv then `uv pip install`.
+- Include information useful for debugging in program output.
+- Read the file before editing it.
+- For multiline git commit messages (Cursor limit): write the message to a file, then `git commit -F <filename>`, then remove the file. Include `[Cursor] ` in commit message and PR title.
+
+## Cursor learned
+
+- Handle different character encodings (e.g. UTF-8) for international search results.
+- Send debug information to stderr; keep main output on stdout for pipelines.
+- In matplotlib with seaborn, use style name `seaborn-v0_8` instead of `seaborn` (seaborn version change).
+- Use model name `gpt-5.4` for OpenAI GPT-5.4 with vision.
+- For recent news searches, use the current year or the "recent" keyword.
+- **Markdown → PDF with images**: Use `tools/md_to_pdf.py`. Dependencies: `markdown`, `playwright`; run `playwright install chromium` once. Images in md use relative paths (same dir as md). npm `md-to-pdf` uses Puppeteer and can be slow on first run; Python+Playwright is reliable.
+- **Google Slides local images**: keep them in `slides/assets/` and use kebab-case names like `ai-competence-matrix.png`. The slides generator should reject local image paths outside that folder.
+- **Google Slides templates**: when using a template, prefer the template's actual `layoutId` and placeholder metadata over guessed canonical placeholder names. `TITLE_ONLY` may map to `CENTERED_TITLE`, not `TITLE`.
+- **Google Slides title-only slides**: do not assume the API's predefined `TITLE_ONLY` will match the template's styled section divider. Inspect the template layouts first and use the correct template layout if the user wants the template's visual title-only slide.
+- **Google Slides placeholders**: placeholder overlap usually means text was inserted into the wrong shape or the template placeholder mapping was wrong. Correct placeholder mapping is better than drawing ad-hoc replacement text boxes.
+- **Google Slides body text defaults for this project**: generated body text should use font size `14` and line spacing `1.15` unless the user asks otherwise.
+- **Google Slides long titles**: when titles wrap, push the body down automatically so title and content do not collide.
+- **Google Slides deck updates**: when appending/updating an existing deck, use a per-run unique page/object ID prefix, not just slide-index-based IDs, to avoid collisions across multiple append runs.
+- **Google Slides content style for teaching decks**: prepare slides for both live teaching and after-class reading. Use phrase-based bullets instead of long full sentences, but do not make them too short; each slide should still carry enough content and context for students to understand the logic on their own. Match the amount of content to the available teaching time (roughly one slide per 90 seconds unless the user says otherwise).
+- **Extract page to Obsidian**: when capturing page content, always include code blocks in the content. Use `browser_search` to locate code on the page if the snapshot doesn't expose it; add blocks with `{"type": "code", "language": "python|bash|text|...", "text": "..."}` in the JSON payload. The extract script supports the "code" block type.

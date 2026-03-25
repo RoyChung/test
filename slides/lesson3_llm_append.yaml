@@ -1,0 +1,226 @@
+# Append: Essential Knowledge of LLM slides (33 content + 7 title-only transitions)
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/lesson3_llm_append.yaml --update "1ks0T10iQ7PRywMzfxYkZKm4Nl2an0tCIt3z65Nk6CQY"
+
+title: "Essential Knowledge of LLM"
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "How LLMs Work Internally"
+    layout: TITLE_ONLY
+
+  - title: "Memory — The Illusion"
+    content: |
+      • GPT has no real memory; inference doesn't change the model
+      • ChatGPT simulates memory by putting conversation history into the prompt
+      • Short-term, contextual — resets per session
+
+  - title: "Memory — What Really Happens"
+    content: |
+      • User: "Call me John" → ChatGPT builds a prompt with that history
+      • GPT sees the full context and responds
+      • No database, no recall — just context in the prompt
+
+  - title: "GPT vs ChatGPT"
+    content: |
+      • GPT = raw model (API)
+      • ChatGPT = product (web app, extra prompts, safety, memory UI)
+      • ChatGPT uses smaller context windows by tier (8k / 32k / 128k)
+
+  - title: "Knowledge — Static"
+    content: |
+      • Trained once; knowledge cutoff date
+      • Cannot update by chatting — "teaching" only lives in that prompt
+      • Lost when a new conversation starts
+      • Use RAG or context injection to add new info
+
+  - title: "Context Window — Definition"
+    content: |
+      • Max input length (tokens)
+      • GPT-4 Turbo: 128k; GPT-5: 400k (~300k words, ~600 pages)
+      • ~0.75 words per token
+      • Performance drops before the limit (~3/4 full)
+
+  - title: "Context Window — Practical Limits"
+    content: |
+      • ChatGPT uses smaller windows by design
+      • Longer conversations → earlier turns dropped → forgetting
+      • For full capacity, use the API directly
+
+  - title: "Common Pitfalls of GenAI"
+    layout: TITLE_ONLY
+
+  - title: "Laziness — What You See"
+    content: |
+      • Translating or rewriting long text
+      • AI sticks at first, then skips sentences, then skips chunks
+      • Not trained for long outputs
+
+  - title: "Laziness — Why and Fix"
+    content: |
+      • Output limit ~4k tokens (e.g. GPT-4 Turbo)
+      • Split work: "rewrite this 1 page" × N instead of "rewrite these 5 pages"
+      • Laziness comes from the model, not ChatGPT's system prompts (verified via API)
+
+  - title: "Forgetting — What You See"
+    content: |
+      • Early rules (e.g. "no emoji", "don't use X") get lost as chat goes on
+      • ChatGPT drops oldest turns to control cost and latency
+
+  - title: "Forgetting — When GPT Forgets"
+    content: |
+      • At ~3/4 of context window, even the model degrades
+      • Especially obvious with old 4k-token models
+      • Newer 16k / 128k models harder to trigger
+
+  - title: "Files and Webpages"
+    content: |
+      • Everything → converted to text
+      • CSV: GPT guesses structure, makes wrong assumptions
+      • Web: scraping fails → hallucination
+      • Fix: paste first lines / webpage content into the prompt
+      • Treat ChatGPT like an intern — give enough info
+
+  - title: "Best Way to Use ChatGPT"
+    layout: TITLE_ONLY
+
+  - title: "Edit, Not Chat"
+    content: |
+      • Context fills with wrong answers and scattered requests
+      • Use Edit: consolidate all requirements into one prompt
+      • Iterate by editing that prompt, not adding many turns
+      • Result: clean context, reusable templates, fewer lazy/forget issues
+
+  - title: "How to Use GenAI Effectively"
+    layout: TITLE_ONLY
+
+  - title: "Which Tasks to Delegate"
+    content: |
+      • Consensus test: "Is consensus what I want?" Yes → delegate
+      • Transformation tasks (translate, idea→code, summarize) — LLMs strong
+      • Factual vs reasoning — better at reasoning, weaker on precise recall
+      • Repetitive vs creative — delegate repetitive, keep creative human
+
+  - title: "Examples"
+    content: |
+      • Summarize material → delegate
+      • Learn basic facts (e.g. seafood) → delegate
+      • Niche research → search first, then ask to summarize
+      • Creative / insight tasks → you think, delegate automatable sub-tasks
+
+  - title: "Pitfall — Protect Your Core Competency"
+    content: |
+      • Over-delegating dulls judgment; quality drops without noticing
+      • Practice: define success criteria, assess outputs, fail fast
+      • Never delegate your core value; keep thinking and writing for what matters
+
+  - title: "How Is GenAI Different from Humans?"
+    layout: TITLE_ONLY
+
+  - title: "Consensus vs Contrarian"
+    content: |
+      • GenAI outputs consensus of training data
+      • Valuable outcomes often need contrarian + correct views
+      • GenAI won't give those — that part is on you
+
+  - title: "Hallucination — Inherent"
+    content: |
+      • Next-token prediction; no explicit truth check
+      • Use workarounds: RAG, search (e.g. Bing), context docs
+      • GenAI = fuzzy in/out vs software exact in/out
+
+  - title: "What Humans Still Do"
+    content: |
+      • Judgment (real-world verification)
+      • Eureka (connect dots, see importance)
+      • Critical thinking, intuition, physical world
+      • GPT can't replace these yet
+
+  - title: "How to Train an LLM"
+    layout: TITLE_ONLY
+
+  - title: "ML Training Analogy"
+    content: |
+      • Like debugging: input → output, compare to expected, nudge model
+      • Soft nudges across many examples; don't fix one aggressively (overfitting)
+
+  - title: "Finding Correspondence"
+    content: |
+      • Model finds patterns that minimize loss, not "understanding" like humans
+      • Random data → model still finds patterns
+      • Goal = optimize loss, not deep understanding
+
+  - title: "Pre-Training — The Core"
+    content: |
+      • Predict next token on huge text (e.g. 100M books)
+      • Wrong prediction → nudge weights
+      • Learns facts ("sun rises from east") and nuanced context (Venus → "west")
+
+  - title: "Pre-Training — The Magic"
+    content: |
+      • Simple task of next-token prediction → knowledge, reasoning
+      • Iterative predict-append-predict → long coherent text
+      • LLM = compression of world knowledge
+
+  - title: "Noisy Nudge → Hallucination"
+    content: |
+      • Rare facts get drowned by majority; model doesn't learn them
+      • No explicit correctness check
+      • Hence hallucination for uncommon knowledge
+      • Math thin in training → weak at math
+
+  - title: "Instruction Fine-Tuning"
+    content: |
+      • Small curated data; User/Assistant format
+      • Teaches "follow instructions" and Q&A style
+      • Doesn't change core; just output format
+      • Enables direct questions instead of prompt engineering
+
+  - title: "RLHF"
+    content: |
+      • Reinforcement Learning from Human Feedback
+      • Judge AI compares two responses; humans rank which is better
+      • Judge AI guides fine-tuning
+      • Scalable, flexible vs manual curated answers
+
+  - title: "Why Open-Source Models & Toolchains"
+    layout: TITLE_ONLY
+
+  - title: "When Closed-Source Fails — Compliance"
+    content: |
+      • PII, sensitive finance/health data can't go to external APIs
+      • Legal and compliance blocks cloud usage
+
+  - title: "When Closed-Source Fails — Infrastructure"
+    content: |
+      • Low latency needed; remote areas with bad connectivity
+      • Can't rely on remote API for reliability
+
+  - title: "When Closed-Source Fails — Throughput & Cost"
+    content: |
+      • API limits (e.g. 50 QPM)
+      • High-volume processing (e.g. mining) → token cost huge
+      • Local + unlimited = valuable option
+
+  - title: "Open-Source Flexibility"
+    content: |
+      • Fine-tune for niche domains
+      • Distill smaller models; control alignment
+      • Custom RAG pipelines vs one-size GPTs
+
+  - title: "Ollama — Local Backend"
+    content: |
+      • Download like an app; no compile
+      • Serves models locally; OpenAI-compatible API
+      • Supports Mac / Windows / Linux, Apple Silicon
+
+  - title: "Open WebUI — Chat Interface"
+    content: |
+      • Docker one-liner; ChatGPT-like UI
+      • Model picker, history, images, voice
+      • More configurable than ChatGPT; RAG, tools, agents
+
+  - title: "Agents — Tools & Multi-Turn"
+    content: |
+      • Calculator, search overcome LLM limits
+      • Open WebUI: define Python function + docstring → tool
+      • 纯介绍 — no hands-on in this session

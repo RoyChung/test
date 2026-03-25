@@ -1,0 +1,397 @@
+# Unlocking Enterprise AI Lesson 3
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/unlocking_enterprise_ai_lesson3.yaml -o "Unlocking Enterprise AI Lesson 3"
+
+title: Unlocking Enterprise AI Lesson 3
+template: 16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU
+slides:
+- title: Recap of Lesson 1
+  content: "• Data cloud: what it is and why it matters\n• How AI changes the enterprise:\n  - Structural, workflow, infrastructure,\
+    \ and risk perspectives\n  - Production costs\n• The Impossible Triangle of AI Transformation:\n  - Harmony, Effectiveness,\
+    \ Universality\n  - Using this model to project how companies and enterprises would react\n• Lab 1: Using AI tools (e.g.\
+    \ Cursor) — \"I say you write (code)\" from \"I ask you answer\"\n\nKey takeaway: Roles in the enterprise will and need\
+    \ to become more vertical. Enterprises need staff who know how to build with AI (AI builder).\n"
+- title: Recap of Lesson 2
+  content: '• Beyond any single segment (e.g. data layer): a holistic view of AI products and solutions
+
+    • AI Stack: different components of AI systems
+
+
+    Key takeaway: GAI consists of different components, and they are interrelated. The lower layers in the AI stack dominate;
+    the upper layers compensate.
+
+    '
+- title: Lesson 3
+  content: "What is an AI builder and how to become one?\n\nToday's agenda:\n• AI competence matrix\n• Essential knowledge\
+    \ of LLM and how LLMs are trained:\n  - What is an LLM?\n  - How to train an LLM?\n  - Which tasks should I delegate to\
+    \ AI?\n  - Why open-source LLMs?\n• What is RAG, and why don’t I talk much about RAG?\n• Lab 2 demo\n• Lab 3: Cursor basics\
+    \ and how to prompt in Cursor\n"
+- title: ''
+  image: assets/ai-competence-matrix.png
+  fullscreen: true
+- title: 'L3: The AI Consumer'
+  content: 'Keyword: Chatting
+
+
+    • Where most people are today
+
+    • Behaviour: Use AI as a smarter Google or patient assistant — translate docs, polish emails, search knowledge
+
+    • Tools: ChatGPT, Claude, Gemini (web)
+
+    • Limitation: Highly dependent on luck. If AI is wrong, you often don’t know what to do besides Regenerate. Your AI ability
+    is limited by the model’s “mood” and baseline.
+
+    • Mindset: Treat it as a consultant.
+
+    '
+- title: 'L4: The AI Tinkerer / Vibe Coder'
+  content: 'Keyword: One-off
+
+
+    • Entered via Cursor, Replit, Manus, Lovable, Google AI Studio, etc. Noisy stage, easy to overestimate yourself.
+
+    • Behaviour: Use natural language to make AI write code — build websites, scripts, or apps. Solve concrete, single-point
+    pain points.
+
+    • Tools: Cursor, v0, Bolt, simple scripts
+
+    • Limitation: Happy Path works; once you hit errors (Edge Cases), deployment, or slightly complex needs, the system breaks.
+    Generated code is hard to maintain and iterate — one-off toys.
+
+    • Mindset: Treat it as outsourced labour.
+
+    '
+- title: 'L5: The AI Builder'
+  content: "Keywords: Reliability & Iteration\n\nThe line between hobbyist and professional. The workplace needs stable delivery,\
+    \ not “roughly works”.\n\n• Behaviour: Build workflows (not just demos). Automate high-value, high-risk work with know-how\
+    \ to ensure accuracy. Actually improve your work with AI.\n• Core capabilities:\n  - Context Engineering: right amount\
+    \ of context — no information loss, no hallucination\n  - Evaluation: define task goals, quantify solution quality, auto-monitor\n\
+    \  - Iterative Mindset: refine via prompt changes, step-splitting until production-ready\n• Mindset: Treat it as a logic\
+    \ engine; know its limits clearly.\n"
+- title: 'L6: The AI Architect'
+  content: "Keywords: Orchestration & Integration\n\nTop tier. You design systems instead of chasing the strongest model +\
+    \ tool.\n\n• Behaviour: Orchestrate multiple specialised models (e.g. one for analysis, another for creativity). Build\
+    \ systems that go beyond the Context Wall, integrate personal data, and proactively monitor the world — a “digital twin”.\n\
+    • Core capabilities:\n  - System Resilience: overcome brittle prompts and single-call limits; long-chain tasks; stable\
+    \ across model updates\n  - Contextual Architecture: dynamic data flows — AI taps notes, chats, KB in real time\n• Mindset:\
+    \ “Building what you can’t buy.” Fill gaps left by giants — your unique OS.\n"
+- title: How LLMs Work Internally
+  layout: TITLE_ONLY
+- title: Memory — The Illusion
+  content: '• GPT has no real memory; inference doesn''t change the model
+
+    • ChatGPT simulates memory by putting conversation history into the prompt
+
+    • Short-term, contextual — resets per session
+
+    '
+- title: Memory — What Really Happens
+  content: '• User: "Call me John" → ChatGPT builds a prompt with that history
+
+    • GPT sees the full context and responds
+
+    • No database, no recall — just context in the prompt
+
+    '
+- title: GPT vs ChatGPT
+  content: '• GPT = raw model (API)
+
+    • ChatGPT = product (web app, extra prompts, safety, memory UI)
+
+    • ChatGPT uses smaller context windows by tier (8k / 32k / 128k)
+
+    '
+- title: Knowledge — Static
+  content: '• Trained once; knowledge cutoff date
+
+    • Cannot update by chatting — "teaching" only lives in that prompt
+
+    • Lost when a new conversation starts
+
+    • Use RAG or context injection to add new info
+
+    '
+- title: Context Window — Definition
+  content: '• Max input length (tokens)
+
+    • GPT-4 Turbo: 128k; GPT-5: 400k (~300k words, ~600 pages)
+
+    • ~0.75 words per token
+
+    • Performance drops before the limit (~3/4 full)
+
+    '
+- title: Context Window — Practical Limits
+  content: '• ChatGPT uses smaller windows by design
+
+    • Longer conversations → earlier turns dropped → forgetting
+
+    • For full capacity, use the API directly
+
+    '
+- title: Common Pitfalls of GenAI
+  layout: TITLE_ONLY
+- title: Laziness — What You See
+  content: '• Translating or rewriting long text
+
+    • AI sticks at first, then skips sentences, then skips chunks
+
+    • Not trained for long outputs
+
+    '
+- title: Laziness — Why and Fix
+  content: '• Output limit ~4k tokens (e.g. GPT-4 Turbo)
+
+    • Split work: "rewrite this 1 page" × N instead of "rewrite these 5 pages"
+
+    • Laziness comes from the model, not ChatGPT''s system prompts (verified via API)
+
+    '
+- title: Forgetting — What You See
+  content: '• Early rules (e.g. "no emoji", "don''t use X") get lost as chat goes on
+
+    • ChatGPT drops oldest turns to control cost and latency
+
+    '
+- title: Forgetting — When GPT Forgets
+  content: '• At ~3/4 of context window, even the model degrades
+
+    • Especially obvious with old 4k-token models
+
+    • Newer 16k / 128k models harder to trigger
+
+    '
+- title: Files and Webpages
+  content: '• Everything → converted to text
+
+    • CSV: GPT guesses structure, makes wrong assumptions
+
+    • Web: scraping fails → hallucination
+
+    • Fix: paste first lines / webpage content into the prompt
+
+    • Treat ChatGPT like an intern — give enough info
+
+    '
+- title: Best Way to Use ChatGPT
+  layout: TITLE_ONLY
+- title: Edit, Not Chat
+  content: '• Context fills with wrong answers and scattered requests
+
+    • Use Edit: consolidate all requirements into one prompt
+
+    • Iterate by editing that prompt, not adding many turns
+
+    • Result: clean context, reusable templates, fewer lazy/forget issues
+
+    '
+- title: How to Use GenAI Effectively
+  layout: TITLE_ONLY
+- title: Which Tasks to Delegate
+  content: '• Consensus test: "Is consensus what I want?" Yes → delegate
+
+    • Transformation tasks (translate, idea→code, summarize) — LLMs strong
+
+    • Factual vs reasoning — better at reasoning, weaker on precise recall
+
+    • Repetitive vs creative — delegate repetitive, keep creative human
+
+    '
+- title: Examples
+  content: '• Summarize material → delegate
+
+    • Learn basic facts (e.g. seafood) → delegate
+
+    • Niche research → search first, then ask to summarize
+
+    • Creative / insight tasks → you think, delegate automatable sub-tasks
+
+    '
+- title: Pitfall — Protect Your Core Competency
+  content: '• Over-delegating dulls judgment; quality drops without noticing
+
+    • Practice: define success criteria, assess outputs, fail fast
+
+    • Never delegate your core value; keep thinking and writing for what matters
+
+    '
+- title: How Is GenAI Different from Humans?
+  layout: TITLE_ONLY
+- title: Consensus vs Contrarian
+  content: '• GenAI outputs consensus of training data
+
+    • Valuable outcomes often need contrarian + correct views
+
+    • GenAI won''t give those — that part is on you
+
+    '
+- title: Hallucination — Inherent
+  content: '• Next-token prediction; no explicit truth check
+
+    • Use workarounds: RAG, search (e.g. Bing), context docs
+
+    • GenAI = fuzzy in/out vs software exact in/out
+
+    '
+- title: What Humans Still Do
+  content: '• Judgment (real-world verification)
+
+    • Eureka (connect dots, see importance)
+
+    • Critical thinking, intuition, physical world
+
+    • GPT can''t replace these yet
+
+    '
+- title: How to Train an LLM
+  layout: TITLE_ONLY
+- title: ML Training Analogy
+  content: '• Like debugging: input → output, compare to expected, nudge model
+
+    • Soft nudges across many examples; don''t fix one aggressively (overfitting)
+
+    '
+- title: Finding Correspondence
+  content: '• Model finds patterns that minimize loss, not "understanding" like humans
+
+    • Random data → model still finds patterns
+
+    • Goal = optimize loss, not deep understanding
+
+    '
+- title: Pre-Training — The Core
+  content: '• Predict next token on huge text (e.g. 100M books)
+
+    • Wrong prediction → nudge weights
+
+    • Learns facts ("sun rises from east") and nuanced context (Venus → "west")
+
+    '
+- title: Pre-Training — The Magic
+  content: '• Simple task of next-token prediction → knowledge, reasoning
+
+    • Iterative predict-append-predict → long coherent text
+
+    • LLM = compression of world knowledge
+
+    '
+- title: Noisy Nudge → Hallucination
+  content: '• Rare facts get drowned by majority; model doesn''t learn them
+
+    • No explicit correctness check
+
+    • Hence hallucination for uncommon knowledge
+
+    • Math thin in training → weak at math
+
+    '
+- title: Instruction Fine-Tuning
+  content: '• Small curated data; User/Assistant format
+
+    • Teaches "follow instructions" and Q&A style
+
+    • Doesn''t change core; just output format
+
+    • Enables direct questions instead of prompt engineering
+
+    '
+- title: RLHF
+  content: '• Reinforcement Learning from Human Feedback
+
+    • Judge AI compares two responses; humans rank which is better
+
+    • Judge AI guides fine-tuning
+
+    • Scalable, flexible vs manual curated answers
+
+    '
+- title: Why Open-Source Models & Toolchains
+  layout: TITLE_ONLY
+- title: When Closed-Source Fails — Compliance
+  content: '• PII, sensitive finance/health data can''t go to external APIs
+
+    • Legal and compliance blocks cloud usage
+
+    '
+- title: When Closed-Source Fails — Infrastructure
+  content: '• Low latency needed; remote areas with bad connectivity
+
+    • Can''t rely on remote API for reliability
+
+    '
+- title: When Closed-Source Fails — Throughput & Cost
+  content: '• API limits (e.g. 50 QPM)
+
+    • High-volume processing (e.g. mining) → token cost huge
+
+    • Local + unlimited = valuable option
+
+    '
+- title: Open-Source Flexibility
+  content: '• Fine-tune for niche domains
+
+    • Distill smaller models; control alignment
+
+    • Custom RAG pipelines vs one-size GPTs
+
+    '
+- title: Ollama — Local Backend
+  content: '• Download like an app; no compile
+
+    • Serves models locally; OpenAI-compatible API
+
+    • Supports Mac / Windows / Linux, Apple Silicon
+
+    '
+- title: Open WebUI — Chat Interface
+  content: '• Docker one-liner; ChatGPT-like UI
+
+    • Model picker, history, images, voice
+
+    • More configurable than ChatGPT; RAG, tools, agents
+
+    '
+- title: Agents — Tools & Multi-Turn
+  content: '• Calculator, search overcome LLM limits
+
+    • Open WebUI: define Python function + docstring → tool
+
+    • 纯介绍 — no hands-on in this session
+
+    '
+- title: 'Comment-Oriented Programming — Let the AI Fill in the Gaps'
+  content: '• Write comments / docstrings as mini-specs; Cursor turns intent into code
+
+    • Good for functions, class scaffolding, boilerplate, and clear step-by-step logic
+
+    • Workflow shift: think in tasks and structure, let AI handle syntax and repetitive implementation
+
+    • If output is off: refine the comment, add constraints, clarify naming / behaviour, then regenerate
+
+    • Key idea: comments are no longer only for humans; they also become prompts for your AI coding partner
+
+    '
+- title: 'Prompt-Oriented Programming — Chatting Your Way to Better Code'
+  content: '• Use chat when the task is broader than one code block: refactor, redesign, performance, multi-file changes
+
+    • Ask for outcomes, trade-offs, and revisions: “make this scale better”, “reduce memory”, “summarize what changed”
+
+    • Stronger than comments for higher-level guidance because Cursor can reason across files and architecture
+
+    • Back-and-forth matters: review the proposal, push back, ask follow-up questions, tighten the solution
+
+    • Key idea: move from line-by-line editing to conversational design and codebase-level thinking
+
+    '
+- title: 'Objective-Oriented Programming — Agents at Work'
+  content: '• In agent mode, describe the objective instead of every step; AI plans, edits files, runs commands, and iterates
+
+    • Best for longer workflows: data processing, report generation, setup, debugging, or tasks spanning many files
+
+    • Your role changes: less operator, more director — define goal, constraints, and success criteria, then validate results
+
+    • Works well when objective is concrete; vague goals still cause drift, retries, or wrong assumptions
+
+    • Key idea: the higher the abstraction, the more important clear goals and result-checking become
+
+    '

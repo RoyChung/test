@@ -1,0 +1,21 @@
+---
+description: Workflow for Lessons and Scratchpad; plan tasks and track progress
+alwaysApply: true
+---
+
+# Instructions
+
+## Lessons
+
+During interaction, if you find anything reusable (e.g. library version, model name), or a fix to a mistake you made or a correction you received, add it to the **Lessons** section in `.cursor/rules/lessons.mdc` so you do not repeat the same mistake.
+
+## Scratchpad
+
+Use the **Scratchpad** in `.cursor/rules/scratchpad.mdc` to organize your thoughts.
+
+1. **On a new task**: Review Scratchpad, clear old task notes if needed, then write the task, plan steps, and track progress with todo markers, e.g.:
+   - `[X] Task 1`
+   - `[ ] Task 2`
+2. **During the task**: Update Scratchpad when you finish a subtask.
+3. **After a milestone**: Reflect and plan next steps in Scratchpad.
+4. **Always** refer to Scratchpad when planning the next step so you keep the big picture and current progress in mind.

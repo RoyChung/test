@@ -1,0 +1,99 @@
+# AI时代编程基础：指挥AI动手干活 — Lessons 3 & 4
+# ~5 min per lesson. Append to deck 12o2ZIiyOrKetx1I1JT3KL76q1nKE7g96lN9f7NO1O60
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/ai_coding_lessons_3_4_append.yaml --update 12o2ZIiyOrKetx1I1JT3KL76q1nKE7g96lN9f7NO1O60
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  # --- Lesson 3: Error Resilience ---
+  - title: "Lesson 3 — Error Resilience: Red Text Is Not Disaster, It's a Clue"
+    content: "—"
+
+  - title: "Mantra: Don't Panic When You See Red"
+    content: |
+      • When the terminal prints a long block of red text, it feels like a disaster
+
+      • In reality, longer error messages give AI more context to fix the problem faster
+
+      • The goal: learn to diagnose three common error types using a CER card
+
+      • CER = Context + Error + Request — the structure that lets AI solve problems precisely
+
+  - title: "Three Types of Errors"
+    content: |
+      • Syntax error: violates Python grammar (e.g., missing colon). Cursor shows red squiggles; use Quick Fix or Add to Chat → Fix it
+
+      • Dependency error: code is valid but environment lacks a library (e.g., ModuleNotFoundError). Use CER: select the error, Add to Chat, say Fix it. AI suggests pip install
+
+      • Runtime error: program runs but crashes during execution (e.g., ZeroDivisionError). Long tracebacks appear — read the last line first for the root cause
+
+  - title: "CER Card: How to Ask AI for Help"
+    content: |
+      • Context: Cursor auto-reads your terminal, so AI knows what command you ran
+
+      • Error: select the exact error text and add it to chat
+
+      • Request: say "Fix it" or "Fix it and explain it to me"
+
+      • With all three, AI can pinpoint and fix the issue without you searching manually
+
+  - title: "Lesson 3 Takeaways"
+    content: |
+      • Red errors are clues, not failures. Use them as input to AI
+
+      • Select → Add to Chat → Fix it: the core workflow for becoming a builder
+
+      • Traceback tip: the last line of a long error usually names the real cause
+
+      • Homework: fix mystery_script.py using CER; share your chat and run result
+
+  # --- Lesson 4: Logical Description ---
+  - title: "Lesson 4 — Logical Description: From Hidden Assumptions to Explicit Contract"
+    content: "—"
+
+  - title: "Worse Than a Crash: Wrong Result, No Error"
+    content: |
+      • A script can run smoothly, report no error, and still produce wrong or destructive output
+
+      • This happens when you use intuition to instruct AI instead of logic to constrain it
+
+      • Example: photo organizer. Vague prompt: "Put all photos into one flat folder."
+
+      • Disaster: same-name files (sunset.jpg) get overwritten silently; data is lost with no terminal warning
+
+  - title: "The Real Problem: Hidden Assumptions"
+    content: |
+      • You assume: different content means different photos even if filenames match
+
+      • AI may assume: same filename means same file, so overwriting is fine
+
+      • Neither is "wrong" — the mismatch comes from unstated logic, not lack of intelligence
+
+      • Requirement writing is not essay writing; it is surfacing and aligning these assumptions
+
+  - title: "3C Contract: Context, Components, Criteria"
+    content: |
+      • Context: state the top priority (e.g., data safety over convenience; better do nothing than do wrong)
+
+      • Components: break the task into steps (scan recursively, identify duplicates, perform ops, generate report)
+
+      • Criteria: turn hidden assumptions into rules — define "duplicate" by content not filename; never overwrite; rename instead; default to copy mode; only process .jpg/.png
+
+  - title: "Verify With Numbers and Eyes"
+    content: |
+      • Do not trust execution alone. Require objective checks: input count = output + duplicates + skipped. Print WARNING if the math does not match
+
+      • Add a report.html: kept photos vs. removed duplicates, so you can visually spot misjudgments
+
+      • When something goes wrong, treat it as feedback: go back to Criteria, add the missing rule, regenerate
+
+  - title: "Lesson 4 Takeaways"
+    content: |
+      • The most dangerous AI output is often no crash, but wrong outcome
+
+      • Use 3C to convert vague intent into logic AI cannot misread
+
+      • Acceptance = verification logic + visual review where useful
+
+      • Homework: write your own 3C prompt for a safe organizer; add a Criteria (e.g., organize by year/month); submit prompt + run output + HTML report

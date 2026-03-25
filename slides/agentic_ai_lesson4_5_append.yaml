@@ -1,0 +1,35 @@
+# Agentic AI — 2 detailed slides from Lesson 4 (case study) and Lesson 5 (operator → AI Manager)
+# Append to deck 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/agentic_ai_lesson4_5_append.yaml --update 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Case Study: How the Three Features Work Together"
+    content: |
+      • Stock chart task: "Generate a 5-year comparison of two companies' stock prices, aligned at start date, with trend lines"
+
+      • Tool calling: AI fetches data (API or scraper), chooses matplotlib for visualization, saves a PNG locally. Without tools, it can only guess or describe — with tools, it delivers a real file
+
+      • Multi-step decision-making: First run fails — missing requests or matplotlib. AI runs pip install and retries. Date format errors? AI adds try-catch or adjusts the script. X-axis labels wrong? AI fixes and reruns in the same session. No copy-paste of errors back to ChatGPT required
+
+      • Self-iteration: You set a rule: "Do not report done unless start dates are aligned." AI checks its output, finds misalignment, reruns the script, and only says "task complete" when the chart meets the standard. You click Accept and receive the final image
+
+      • Behind the scenes: What looks like "AI did it in one shot" often involves several cycles of try, fail, adjust, retry — Agentic AI hides this complexity. It is not magic; it is language model + tools + iteration logic
+
+      • Why all three matter: Tools alone — AI stops at first error. Multi-step alone — AI retries but may never converge without a success standard. Self-check alone — AI has a target but cannot act. Together: AI acts, adapts, and verifies until done
+
+  - title: "From Operator to AI Manager — A Fundamental Shift"
+    content: |
+      • Old workflow: Open DB tool, write SQL, copy results to Excel or a viz tool, tweak colors and formats — often 30+ minutes for "simple" tasks
+
+      • New workflow: "Give me this week vs last week's core metrics with YoY growth and explanation of volatility." AI decides how to fetch data, generates charts, and writes the analysis. If it misreads a column or reverses dates, it self-corrects. You add: "Include channel conversion rate" — it does
+
+      • The shift: From "hands-on executor" to "brain-heavy manager." Mechanical, repetitive steps are largely removed; your effort goes into strategy, design, and high-level decisions instead of execution details
+
+      • AI as scalable workforce: Not just an assistant — a team you can scale. Give clear goals and success criteria; AI handles the rest. Managing AI is not micromanagement; it is packaging tasks as "explicit goal + acceptance criteria" and providing light oversight
+
+      • New roles: AI prompt designer, AI workflow engineer, Agentic AI owner — people who decompose execution into clear instructions rather than write every script themselves
+
+      • Enterprise impact: Batch data capture and labeling that used to require interns or outsourcers can now be automated — AI logs in, crawls, tags, and loads into the data warehouse. Creative experiments (e.g., 100 different tag lines, auto-publish and track) become feasible at scale

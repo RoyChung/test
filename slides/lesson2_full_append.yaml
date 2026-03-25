@@ -1,0 +1,158 @@
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  - title: "Lesson 2 — Setting Up the Builder Environment"
+    layout: TITLE_ONLY
+
+  - title: "What This Lesson Actually Trains"
+    content: |
+      • The goal is not memorizing commands; the goal is learning how to work with AI in a real development environment
+
+      • You will set up Cursor, create a project, use AI to operate the terminal, install Python, and create a virtual environment
+
+      • You will also experience your first deliberate error and fix it with the CER diagnostic card
+
+      • This is the first practical step from passive AI user to AI builder
+
+  - title: "Install Cursor First"
+    content: |
+      • Cursor is one of the strongest AI productivity tools today, even for people who do not see themselves as programmers
+
+      • Download it from `cursor.com`, install it like a normal desktop app, and open it
+
+      • On first launch, your system may show a security prompt; approve it and continue
+
+      • Treat Cursor as your working environment for AI-native building, not just another text editor
+
+  - title: "Log In and Complete the Initial Setup"
+    content: |
+      • Cursor needs account access because its strongest intelligence runs through cloud-backed models
+
+      • During setup, install the `cursor` command when prompted; this makes terminal workflows much smoother later
+
+      • Most other setup options can stay on the default path
+
+      • Early setup matters because convenience reduces friction, and low friction makes practice much more likely
+
+  - title: "Every Project Starts with a Folder"
+    content: |
+      • In Cursor, a project is basically a folder that becomes the working boundary for your files, terminal, and AI context
+
+      • Create a fresh practice folder such as `lesson2` and open it as a project
+
+      • Grant file access when asked; without permission, AI-assisted workflows will break or feel incomplete
+
+      • This simple habit creates a clean workspace instead of mixing experiments into random desktop files
+
+  - title: "Understand the Workspace Before You Build"
+    content: |
+      • Left side: file explorer for your project structure
+
+      • Middle: editor for code, notes, and quick experiments
+
+      • Right side: AI panel, where much of the real leverage comes from
+
+      • If possible, use a stronger model setup such as Composer / Pro-tier workflows, because the difference in coding quality and speed is significant
+
+      • If you do not want another subscription, alternatives exist, but this course assumes a strong AI coding model is available
+
+  - title: "The Terminal Is Not a Hacker Screen"
+    layout: TITLE_ONLY
+
+  - title: "Why the Command Line Matters"
+    content: |
+      • Many beginners fear the terminal because it looks unfamiliar and stripped of visual comfort
+
+      • In reality, it is just a faster, more direct interface to the same computer you already use
+
+      • A useful mental model: the GUI is a decorated showroom; the terminal is the operating entrance underneath
+
+      • With AI helping, you do not need to memorize commands before gaining value from the terminal
+
+  - title: "Terminal Chat: Natural Language to Commands"
+    content: |
+      • Cursor lets you open a terminal and use `Command + K` to describe what you want in plain language
+
+      • You can say things like “rename `abc.txt` to `abcd.txt`” and let AI propose the exact command
+
+      • This changes the skill requirement: less recall of syntax, more clarity of intent
+
+      • The terminal becomes far less intimidating when AI acts as the translator between your words and the shell
+
+  - title: "AI + Terminal Is Powerful Because It Scales"
+    content: |
+      • Small file tasks that are tedious with a mouse become instant when described clearly to AI
+
+      • Batch operations reveal the real advantage: create many files, rename groups, or delete patterned items in seconds
+
+      • What matters is not command trivia; what matters is specifying the pattern and the outcome correctly
+
+      • Key lesson: the terminal is especially AI-friendly because it responds well to precise, structured intent
+
+  - title: "Python Without the Pain"
+    layout: TITLE_ONLY
+
+  - title: "Let AI Install Python for You"
+    content: |
+      • Traditional Python setup is frustrating for beginners: websites, versions, installers, environment paths, and platform differences
+
+      • In Cursor, ask Composer directly: “Install Python for me. I am on a Mac.”
+
+      • AI may inspect your machine, check for Homebrew, suggest `uv`, and run the required steps with your approval
+
+      • Always verify at the end with `python --version` or `python3 --version` so installation is confirmed by evidence, not assumption
+
+  - title: "Why `uv` and Virtual Environments Matter"
+    content: |
+      • Modern Python workflows should avoid dumping every package into the global system environment
+
+      • `uv` is fast, modern, and increasingly a better default than older package management habits
+
+      • A virtual environment gives each project its own isolated space, so dependencies do not conflict across projects
+
+      • This is not busywork; it is how you keep AI-generated development work clean, repeatable, and less fragile
+
+  - title: "Create and Activate `.venv`"
+    content: |
+      • Ask AI to create the virtual environment in the current project, usually as `.venv`
+
+      • After creation, activation is the critical step; until you activate it, you are still outside the isolated environment
+
+      • A changed terminal prefix such as `(.venv)` is your visual confirmation that the environment is active
+
+      • This small habit prevents a large share of beginner confusion around missing packages and inconsistent behavior
+
+  - title: "Your First CER Debugging Exercise"
+    content: |
+      • Write a tiny script, import `numpy`, and run it before the dependency is installed
+
+      • The expected result is failure: `ModuleNotFoundError` is not a disaster, but a training opportunity
+
+      • This is the point of the exercise: learn to treat errors as diagnostic material rather than emotional proof that you are bad at coding
+
+      • In builder workflow, you do not panic first; you capture context first
+
+  - title: "Use CER to Fix the Failure"
+    content: |
+      • Context: what you ran, where you ran it, and which environment you were in
+
+      • Error: the full message exactly as shown, not a vague summary like “it does not work”
+
+      • Request: what you want fixed, and what successful behavior should look like
+
+      • AI can then classify the issue correctly, suggest the install step, and help you verify the repair
+
+      • The real learning is not only fixing `numpy`; it is learning a repeatable way to work with red errors calmly
+
+  - title: "Lesson 2 Takeaways"
+    content: |
+      • You learned to treat Cursor as a practical AI building environment, not just a chat tool
+
+      • You used AI to lower the barrier of the terminal instead of avoiding it
+
+      • You installed Python, understood why isolated environments matter, and activated `.venv`
+
+      • You practiced CER on a real error, which is the beginning of error tolerance as a builder skill
+
+      • Homework: recreate the full setup on your own machine, trigger an error on purpose, and fix it through CER

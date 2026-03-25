@@ -1,0 +1,185 @@
+# Agentic AI Chapter 1 — All output in English
+# Append to deck 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+# Run: .venv/bin/python3 tools/slides_to_google.py slides/agentic_ai_chapter1_append.yaml --update 18i5PmTwyyLTQiKBxXgRkmZ2ZPHQAsF7lpzuGTfGqdRI
+
+title: ""
+template: "16YpxyTKaBNG7ZYtRIS-DOk94JWzrMQaJROPs4jHPGgU"
+
+slides:
+  # --- Lesson 1: Ask-Answer → Say-Do ---
+  - title: "Lesson 1 — From 'Ask You Answer' to 'Say You Do'"
+    content: "—"
+
+  - title: "ChatGPT: Ask You Answer"
+    content: |
+      • ChatGPT excels at outputting text, code snippets, and ideas — but cannot execute them
+
+      • It can give you Python code for a stock chart, yet you must copy it, install libraries, run it, and fix errors yourself
+
+      • Even with web search, it remains "ask you answer": AI fetches references and restates; humans still do the implementation
+
+      • Core limitation: AI delivers thoughts and text; humans complete the execution
+
+  - title: "Copilot / Cursor (Early): Say You Write"
+    content: |
+      • GitHub Copilot brought "comment-driven programming": write a comment, Tab to complete the code
+
+      • Much faster than typing, but still local: it helps you write, not execute
+
+      • Copilot Chat, Cursor Chat added multi-file editing from natural language — a step toward "say you write"
+
+      • You still run code, install deps, capture errors, and paste back to AI for fixes
+
+  - title: "Agentic AI: Say You Do"
+    content: |
+      • Devin, Agent Cursor, Windsurf: AI deeply integrated with OS, terminal, and external tools
+
+      • AI chooses which tools to call, makes next-step decisions based on execution results, and self-debugs
+
+      • One instruction can lead to many commands and iterations until done
+
+      • Code becomes a means to an end; the deliverable is the result — chart, image, report — not the script
+
+  - title: "Lesson 1 Takeaways"
+    content: |
+      • Evolution: Google search + manual work → Ask you answer → Say you write → Say you do
+
+      • Agentic AI is like having an intern: give a goal, AI designs, executes, and iterates
+
+      • Example: "Draw a 5-year Amazon vs Google stock chart" — AI creates file, installs pandas/matplotlib/yfinance, fixes errors, outputs PNG
+
+  # --- Lesson 2: Paradigm Shift ---
+  - title: "Lesson 2 — Agentic AI Paradigm Shift"
+    content: "—"
+
+  - title: "Three Technical Pillars"
+    content: |
+      • Tool use: AI calls tools (CLI, APIs, scripts) to affect the external world
+
+      • Multi-step reasoning: AI observes results, adapts, and continues — not turn-based but iterative
+
+      • Self-check / iteration: AI defines success criteria and keeps trying until met
+
+      • Result: "recursive execution" — one instruction can trigger many steps until completion
+
+  - title: "Impact on Workflows"
+    content: |
+      • Focus shifts from "how to implement" to "what to implement"
+
+      • One person with good prompts can scale execution like a small team
+
+      • Tasks that used to take days can be delegated and verified in hours
+
+      • New risks: security (AI with terminal access), cost (unlimited API calls), logic loops (AI debugging in wrong direction)
+
+  - title: "Lesson 2 Takeaways"
+    content: |
+      • Agentic AI rewrites the human–AI relationship: from "advisor" to "workforce"
+
+      • Use ChatGPT/Claude for creative ideation; use Agentic AI for end-to-end automation
+
+      • Learning curve exists: prompt design, success criteria, and task management matter
+
+  # --- Lesson 3: Three Core Features ---
+  - title: "Lesson 3 — Three Core Features of Agentic AI"
+    content: "—"
+
+  - title: "Feature 1: Tool Use"
+    content: |
+      • Lets AI "step out" of the dialog and act in the real world
+
+      • Before generating text, AI asks: "Do I need an external tool for this?" — then calls it and uses the result
+
+      • Examples: calculator for math, web browser for news, pip for installing libraries, databases, image scripts
+
+      • More tools = more reach; but each tool brings security and permission considerations
+
+  - title: "Feature 2: Multi-Step Reasoning"
+    content: |
+      • Not turn-based Q&A — continuous loop: try, observe, adjust, try again
+
+      • ModuleNotFoundError? AI runs pip install and retries without human paste-back
+
+      • For data analysis: AI finds anomalies, writes cleanup scripts, reruns until visualization succeeds
+
+      • For web scraping: AI adapts to 403s, adds headers, simulates clicks — iterates until it works or hits limits
+
+  - title: "Feature 3: Self-Check / Self-Iteration"
+    content: |
+      • AI defines a success standard and keeps iterating until it meets it
+
+      • Example: "Only report done when all pytest tests pass"
+
+      • Example: "Output must be 1600×900; if not, keep adjusting until it is"
+
+      • Some tools let AI write rules back (e.g., .cursorrules) so it can learn from past runs
+
+  - title: "Lesson 3 Takeaways"
+    content: |
+      • Tools = hands; multi-step = persistence; self-check = quality gate
+
+      • Together they enable "I say, you do" without constant human intervention
+
+  # --- Lesson 4: Case Study — Stock Chart ---
+  - title: "Lesson 4 — Case Study: Three Features in Action"
+    content: "—"
+
+  - title: "Stock Chart Task End-to-End"
+    content: |
+      • Task: "Generate a 5-year Amazon vs Google stock chart, aligned at start date, with trend lines"
+
+      • Tool use: fetches data (API or scraper), calls matplotlib, saves PNG locally
+
+      • Multi-step: pip install if missing deps, fix date format errors, adjust X-axis labels if wrong
+
+      • Self-check: "Do not report done unless start dates are aligned" — AI verifies and re-runs until satisfied
+
+  - title: "Why the Three Features Matter Together"
+    content: |
+      • Tool use alone: AI can call tools but stops at first failure
+
+      • Multi-step alone: AI retries but may never converge without a clear success standard
+
+      • Self-check alone: AI has a standard but cannot act without tools
+
+      • All three: AI acts, adapts, and verifies until the job is done
+
+  - title: "Lesson 4 Takeaways"
+    content: |
+      • What looks like "AI did it once" often involved multiple decisions and iterations behind the scenes
+
+      • Agentic AI = language model + tools + iteration logic
+
+      • Think: "Can AI run this end-to-end for me?" — if yes, you have the right setup
+
+  # --- Lesson 5: Operator → AI Manager ---
+  - title: "Lesson 5 — From Operator to AI Manager"
+    content: "—"
+
+  - title: "The Shift: Hands-On vs Manager"
+    content: |
+      • Old: write scripts, run queries, paste into Excel, tweak visuals — minutes to hours of manual steps
+
+      • New: "Give me this week vs last week's metrics with YoY growth and explanations" — AI fetches, charts, and explains
+
+      • You focus on strategy and creativity; AI handles execution and iteration
+
+      • AI is not just an assistant — it is a scalable, expandable execution team
+
+  - title: "Personal & Organizational Impact"
+    content: |
+      • New roles: AI prompt designer, AI workflow engineer, Agentic AI owner
+
+      • Lower-skilled repetitive work may shift; higher-skilled "manage the AI" work grows
+
+      • Teams can redeploy from chores (reports, data prep) to strategy and client work
+
+      • Managing AI: define goals, set success criteria, provide tools, and oversee outcomes — not micromanage every step
+
+  - title: "Lesson 5 Takeaways"
+    content: |
+      • Agentic AI is a fundamental shift in how work is done, not just a tool upgrade
+
+      • The scarce skill: knowing when to delegate to AI, how to set criteria, and how to validate results
+
+      • Like managing interns: give clear goals, guardrails, and feedback — then let them execute
