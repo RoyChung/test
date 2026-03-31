@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { createRealtimeSession } from "@/api/realtimeSession";
 import { fetchRealtimeProtocol } from "@/api/realtimeProtocol";
 import { getApiConfig, getRealtimeWebSocketUrl } from "@/api/client";
@@ -22,6 +22,12 @@ const POST_STOP_ACCEPT_MS = 12000;
 const FLUSH_DELAY_MS = POST_STOP_ACCEPT_MS + 500;
 /** Server requires ≥100ms of PCM before commit; pad so buffer is never empty. */
 const PCM_PAD_MS = 120;
+/** After Stop, indicator shows Ready while WS may reconnect (avoids connecting flicker). */
+const POST_STOP_UI_GRACE_MS = 3000;
+/** After `commit`, wait this long after the last transcript WS message before sending `stop`. */
+const STOP_DEBOUNCE_MS = 1000;
+/** Hard cap: always send `stop` within this time after commit (even if transcript keeps trickling). */
+const STOP_SEND_MAX_MS = 5000;
 const SAMPLE_RATE_OUT = 24000;
 
 function resampleTo24k(input: Float32Array, srcRate: number): Float32Array {
@@ -43,7 +49,13 @@ function resampleTo24k(input: Float32Array, srcRate: number): Float32Array {
 let wsDebugLogged = 0;
 
 function mergePendingToText(lines: string[], live: string): string {
-  return [...lines, live].filter(Boolean).join("\n").trim();
+  const normalize = (s: string) => s.replace(/\s+/g, " ").trim();
+  return [...lines, live]
+    .filter(Boolean)
+    .map((s) => normalize(s))
+    .filter(Boolean)
+    .join(" ")
+    .trim();
 }
 
 /** Server may emit `type: "error"` for non-fatal cases (e.g. empty commit); socket stays open. */
@@ -59,16 +71,19 @@ function isRecoverableRealtimeWsError(message: string | undefined, code: string 
 
 export interface UseRealtimeTranscriptionResult {
   connectionState: ConnectionState;
+  /** For status UI: after Stop, shows `ready` as Ready label for POST_STOP_UI_GRACE_MS while reconnecting. Logic still uses connectionState. */
+  connectionUiState: ConnectionState;
   /** True while mic is capturing and sending PCM (between Start and Stop). */
   isRecording: boolean;
-  /** Live transcript: updates as WS events arrive (during recording and briefly after Stop). */
+  /** Shown after Stop: text accumulated for the last utterance (not while recording). */
   displayText: string;
+  /** Live panel: updates while recording; after Stop keeps last snapshot until Clear or new Start. */
+  liveDisplayText: string;
   error: string | null;
-  /** While recording: when true, transcript box stops updating (pending still accumulates). */
-  transcriptFrozen: boolean;
-  toggleTranscriptFreeze: () => void;
   start: () => Promise<void>;
   stop: () => void;
+  clearTranscript: () => void;
+  clearLiveTranscript: () => void;
 }
 
 export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
@@ -76,9 +91,10 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
   const [connectionState, setConnectionState] = useState<ConnectionState>("disconnected");
   const [isRecording, setIsRecording] = useState(false);
   const [displayText, setDisplayText] = useState("");
+  const [liveDisplayText, setLiveDisplayText] = useState("");
   const [error, setError] = useState<string | null>(null);
-  const [transcriptFrozen, setTranscriptFrozen] = useState(false);
-  const transcriptFrozenRef = useRef(false);
+  /** Unix ms when post-Stop UI grace ends; 0 = inactive. */
+  const [stopUiGraceUntil, setStopUiGraceUntil] = useState(0);
 
   const connectionStateRef = useRef(connectionState);
   const isRecordingRef = useRef(false);
@@ -88,6 +104,27 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
   useEffect(() => {
     isRecordingRef.current = isRecording;
   }, [isRecording]);
+
+  useEffect(() => {
+    if (stopUiGraceUntil <= 0) return;
+    const ms = stopUiGraceUntil - Date.now();
+    if (ms <= 0) {
+      setStopUiGraceUntil(0);
+      return;
+    }
+    const id = window.setTimeout(() => setStopUiGraceUntil(0), ms);
+    return () => clearTimeout(id);
+  }, [stopUiGraceUntil]);
+
+  const connectionUiState = useMemo((): ConnectionState => {
+    const now = Date.now();
+    if (stopUiGraceUntil > now && connectionState !== "error") {
+      if (connectionState === "connecting" || connectionState === "disconnected") {
+        return "ready";
+      }
+    }
+    return connectionState;
+  }, [connectionState, stopUiGraceUntil]);
 
   useEffect(() => {
     mountedRef.current = true;
@@ -113,10 +150,15 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
   const flushTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const connectInFlightRef = useRef<Promise<void> | null>(null);
   const mountedRef = useRef(true);
-  /** After user sends `{ type: "stop" }`, backend may close the socket — reconnect without showing 離線. */
+  /** After user sends `{ type: "stop" }`, backend may close the socket — reconnect without showing Offline. */
   const reconnectAfterUserStopRef = useRef(false);
   const reconnectAfterStopClearTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const connectWebSocketRef = useRef<() => Promise<void>>(async () => {});
+  /** True after user Stop + `commit` until `{ type: "stop" }` is sent. */
+  const pendingStopSendRef = useRef(false);
+  const stopDebounceTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const stopSendMaxTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const sendStopMessageIfPendingRef = useRef<() => void>(() => {});
 
   const clearIdleTimer = useCallback(() => {
     if (idleDisconnectTimerRef.current !== null) {
@@ -155,6 +197,35 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
     pendingLiveRef.current = "";
     setDisplayText(text);
   }, []);
+
+  const clearStopSendTimers = () => {
+    if (stopDebounceTimerRef.current) {
+      clearTimeout(stopDebounceTimerRef.current);
+      stopDebounceTimerRef.current = null;
+    }
+    if (stopSendMaxTimerRef.current) {
+      clearTimeout(stopSendMaxTimerRef.current);
+      stopSendMaxTimerRef.current = null;
+    }
+  };
+
+  function sendStopMessageIfPending() {
+    if (!pendingStopSendRef.current) return;
+    pendingStopSendRef.current = false;
+    clearStopSendTimers();
+    const w = wsRef.current;
+    if (!w || w.readyState !== WebSocket.OPEN) return;
+    try {
+      w.send(JSON.stringify({ type: "stop" }));
+    } catch {
+      reconnectAfterUserStopRef.current = false;
+      if (reconnectAfterStopClearTimerRef.current !== null) {
+        clearTimeout(reconnectAfterStopClearTimerRef.current);
+        reconnectAfterStopClearTimerRef.current = null;
+      }
+    }
+  }
+  sendStopMessageIfPendingRef.current = sendStopMessageIfPending;
 
   const applyTranscriptMessage = useCallback((msg: Record<string, unknown>) => {
     const accept =
@@ -200,25 +271,22 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
       }
     }
 
-    // Show transcript immediately while recording and during post-stop accept window.
-    if (recordingActiveRef.current || Date.now() < postStopAcceptUntilRef.current) {
-      const skipWhileFrozen =
-        recordingActiveRef.current && transcriptFrozenRef.current;
-      if (!skipWhileFrozen) {
-        setDisplayText(mergePendingToText(pendingLinesRef.current, pendingLiveRef.current));
-      }
+    // Show transcript in UI only after Stop (not while recording); still accept WS until post-stop window ends.
+    if (!recordingActiveRef.current && Date.now() < postStopAcceptUntilRef.current) {
+      setDisplayText(mergePendingToText(pendingLinesRef.current, pendingLiveRef.current));
     }
-  }, []);
 
-  const toggleTranscriptFreeze = useCallback(() => {
-    setTranscriptFrozen((prev) => {
-      const next = !prev;
-      transcriptFrozenRef.current = next;
-      if (!next) {
-        setDisplayText(mergePendingToText(pendingLinesRef.current, pendingLiveRef.current));
-      }
-      return next;
-    });
+    if (recordingActiveRef.current) {
+      setLiveDisplayText(mergePendingToText(pendingLinesRef.current, pendingLiveRef.current));
+    }
+
+    if (pendingStopSendRef.current) {
+      if (stopDebounceTimerRef.current) clearTimeout(stopDebounceTimerRef.current);
+      stopDebounceTimerRef.current = window.setTimeout(() => {
+        stopDebounceTimerRef.current = null;
+        sendStopMessageIfPendingRef.current();
+      }, STOP_DEBOUNCE_MS);
+    }
   }, []);
 
   const cleanupAudio = useCallback(() => {
@@ -435,6 +503,10 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
         if (wsRef.current !== ws) {
           return;
         }
+        if (pendingStopSendRef.current) {
+          pendingStopSendRef.current = false;
+          clearStopSendTimers();
+        }
         sessionReuseOkRef.current = false;
         wsRef.current = null;
         if (recordingActiveRef.current) {
@@ -564,14 +636,15 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
   const stop = useCallback(() => {
     clearFlushTimer();
     recordingActiveRef.current = false;
-    setTranscriptFrozen(false);
-    transcriptFrozenRef.current = false;
     postStopAcceptUntilRef.current = Date.now() + POST_STOP_ACCEPT_MS;
 
     cleanupAudio();
 
     const ws = wsRef.current;
     if (ws && ws.readyState === WebSocket.OPEN) {
+      pendingStopSendRef.current = true;
+      clearStopSendTimers();
+      setStopUiGraceUntil(Date.now() + POST_STOP_UI_GRACE_MS);
       reconnectAfterUserStopRef.current = true;
       if (reconnectAfterStopClearTimerRef.current !== null) {
         clearTimeout(reconnectAfterStopClearTimerRef.current);
@@ -583,24 +656,25 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
       try {
         ws.send(JSON.stringify({ type: "commit" }));
       } catch {
-        /* ignore */
+        pendingStopSendRef.current = false;
+        clearStopSendTimers();
       }
-      window.setTimeout(() => {
-        const w = wsRef.current;
-        if (!w || w.readyState !== WebSocket.OPEN) return;
-        try {
-          w.send(JSON.stringify({ type: "stop" }));
-        } catch {
-          reconnectAfterUserStopRef.current = false;
-          if (reconnectAfterStopClearTimerRef.current !== null) {
-            clearTimeout(reconnectAfterStopClearTimerRef.current);
-            reconnectAfterStopClearTimerRef.current = null;
-          }
-        }
-      }, 60);
+      if (pendingStopSendRef.current) {
+        stopDebounceTimerRef.current = window.setTimeout(() => {
+          stopDebounceTimerRef.current = null;
+          sendStopMessageIfPendingRef.current();
+        }, STOP_DEBOUNCE_MS);
+        stopSendMaxTimerRef.current = window.setTimeout(() => {
+          stopSendMaxTimerRef.current = null;
+          sendStopMessageIfPendingRef.current();
+        }, STOP_SEND_MAX_MS);
+      }
     }
 
     setIsRecording(false);
+    const stoppedSnapshot = mergePendingToText(pendingLinesRef.current, pendingLiveRef.current);
+    setDisplayText(stoppedSnapshot);
+    setLiveDisplayText(stoppedSnapshot);
 
     flushTimerRef.current = window.setTimeout(() => {
       flushTimerRef.current = null;
@@ -610,11 +684,26 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
     scheduleIdleDisconnect();
   }, [cleanupAudio, clearFlushTimer, flushPendingToDisplay, scheduleIdleDisconnect]);
 
+  const clearTranscript = useCallback(() => {
+    if (recordingActiveRef.current) return;
+    clearFlushTimer();
+    pendingLinesRef.current = [];
+    pendingLiveRef.current = "";
+    setDisplayText("");
+  }, [clearFlushTimer]);
+
+  const clearLiveTranscript = useCallback(() => {
+    if (recordingActiveRef.current) return;
+    setLiveDisplayText("");
+  }, []);
+
   const start = useCallback(async () => {
+    if (pendingStopSendRef.current) {
+      sendStopMessageIfPendingRef.current();
+    }
     setError(null);
     setDisplayText("");
-    setTranscriptFrozen(false);
-    transcriptFrozenRef.current = false;
+    setLiveDisplayText("");
     clearIdleTimer();
     clearFlushTimer();
 
@@ -644,17 +733,19 @@ export function useRealtimeTranscription(): UseRealtimeTranscriptionResult {
     }
 
     recordingActiveRef.current = false;
-    setError("請先聚焦此視窗以連線（見到 Live 後再撳錄音）");
+    setError("Focus this window to connect, then press Record when you see Ready.");
   }, [cleanupAudio, clearFlushTimer, clearIdleTimer, setupAudioGraph]);
 
   return {
     connectionState,
+    connectionUiState,
     isRecording,
     displayText,
+    liveDisplayText,
     error,
-    transcriptFrozen,
-    toggleTranscriptFreeze,
     start,
     stop,
+    clearTranscript,
+    clearLiveTranscript,
   };
 }

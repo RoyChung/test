@@ -72,7 +72,7 @@ export function extractTranscriptParts(msg: Record<string, unknown>): Transcript
         if (p) parts.push(p);
       }
     }
-    const joined = parts.filter(Boolean).join("\n").trim();
+    const joined = parts.filter(Boolean).join(" ").trim();
     if (joined) fullText = joined;
   }
 
@@ -107,7 +107,7 @@ export function extractTranscriptParts(msg: Record<string, unknown>): Transcript
         if (p) parts.push(p);
       }
     }
-    const joined = parts.filter(Boolean).join("\n").trim();
+    const joined = parts.filter(Boolean).join(" ").trim();
     if (joined) fullText = joined;
   }
 

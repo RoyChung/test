@@ -167,6 +167,11 @@ When you get a new task, plan here and track progress with `[X]` / `[ ]`. Update
 - [X] 錄音期間唔顯示字；Stop 後約 2.5s 合併顯示今次 Start–Stop 轉寫；Stop 後閒置 5 分鐘斷 WebSocket；同一條線 OPEN 時再「錄音」可重用（唔再 POST session）
 - [X] `buffer too small` / 0ms：session `vad: false`；音訊圖建立後立即送 120ms 靜音 PCM16@24k；等 `AudioContext` running
 - [X] WS `type: "error"` 可恢復（例如 commit 時 buffer too small）— 唔設 `connectionState` error／`setError`；`isRecoverableRealtimeWsError` + DEV `console.warn`
+- [X] Stop 後 3s `connectionUiState` 仍顯示 Live（`POST_STOP_UI_GRACE_MS`）；`connectionState` 仍管錄音掣／「可開始錄音」；grace 完先跟真實狀態
+- [X] T2 UI：綠 Play／紅 Stop 方格 icon；錄音中唔顯示轉寫、Stop 後先顯示；`clearTranscript`；已移除 Freeze
+- [X] T2：`commit` 後 `stop` 用動態 1000ms debounce（每條轉寫 WS 重設）+ 5s `STOP_SEND_MAX_MS`；`start` 前若 pending 則先 flush `stop`
+- [X] T2 Transcript：`opencc-js` cn→hk、`toTraditionalChinese`；`lang="zh-Hant-HK"`
+- [X] T2：`liveDisplayText` +「Transcript 2 · 即時」框（Stop 後保留、`clearLiveTranscript`）；下面「Transcript · 停止後」+ Clear
 
 ## Transcriptor 2 connect on load + Live indicator + focus reconnect (completed)
 - [X] `hasToken` 時 mount 即 `connectWebSocket()`（POST + WS + `session_ready`）；`connectionState`：`disconnected` | `connecting` | `ready` | `error`；`isRecording` 與連線分開
