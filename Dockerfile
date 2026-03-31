@@ -1,11 +1,11 @@
-# AI Builder / Koyeb: single process (FastAPI + static Next export). See deployment-prompt.md patterns.
-# Build frontend first, then run uvicorn with PORT from the platform.
+# AI Builder / Koyeb: single process (FastAPI + static frontend). Build Transcriptor 2,
+# then run uvicorn with PORT from the platform.
 
 FROM node:20-alpine AS frontend
 WORKDIR /app
-COPY chatgpt-clone/package.json chatgpt-clone/package-lock.json ./
+COPY transcriptor-2/package.json transcriptor-2/package-lock.json ./
 RUN npm ci
-COPY chatgpt-clone/ ./
+COPY transcriptor-2/ ./
 RUN npm run build
 
 FROM python:3.11-slim
@@ -19,7 +19,7 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY main.py .
 COPY static ./static
-COPY --from=frontend /app/out ./chatgpt-clone/out
+COPY --from=frontend /app/dist ./transcriptor-2/dist
 
 EXPOSE 8000
 

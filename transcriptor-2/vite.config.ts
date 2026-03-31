@@ -12,6 +12,7 @@ export default defineConfig(({ mode }) => {
   const env = { ...rootEnv, ...localEnv };
 
   const token = env.AI_BUILDER_TOKEN || env.VITE_AI_BUILDER_TOKEN || "";
+  const exposeToken = mode === "development" ? token : "";
   const baseUrl = (
     env.AI_BUILDER_BASE_URL ||
     env.VITE_AI_BUILDER_BASE_URL ||
@@ -39,7 +40,7 @@ export default defineConfig(({ mode }) => {
       },
     },
     define: {
-      "import.meta.env.VITE_AI_BUILDER_TOKEN": JSON.stringify(token),
+      "import.meta.env.VITE_AI_BUILDER_TOKEN": JSON.stringify(exposeToken),
       "import.meta.env.VITE_AI_BUILDER_BASE_URL": JSON.stringify(baseUrl),
     },
   };

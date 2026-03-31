@@ -205,3 +205,10 @@ When you get a new task, plan here and track progress with `[X]` / `[ ]`. Update
 - [X] Allow post-stop final/completed events to read `text`
 - [X] Keep neutral post-stop events restricted to avoid hallucination
 - [X] Verify edited files stay lint-clean
+
+## Transcriptor 2 deployment
+- [X] Move `transcriptor-2` HTTP auth to same-origin backend proxy
+- [X] Keep realtime WebSocket direct with public base host only
+- [X] Serve built `transcriptor-2` UI from the root deployment app
+- [X] Update Dockerfile for `transcriptor-2` deployment target
+- [ ] Prepare deploy config, commit/push, and trigger deploy

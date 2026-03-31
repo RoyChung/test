@@ -138,6 +138,8 @@ AI_BUILDER_BASE = os.getenv("AI_BUILDER_BASE_URL", "https://space.ai-builders.co
 )
 CHAT_PATH = "/v1/chat/completions"
 SEARCH_PATH = "/v1/search/"
+REALTIME_PROTOCOL_PATH = "/v1/audio/realtime/protocol"
+REALTIME_SESSION_PATH = "/v1/audio/realtime/sessions"
 
 # Rounds 1–3 call upstream with tools (web_search / read_page); last round omits tools (final answer).
 _AGENT_MAX_ROUNDS = 4
@@ -342,6 +344,14 @@ def _search_url() -> str:
 
 def _chat_url(request: Request) -> str:
     base = f"{AI_BUILDER_BASE}{CHAT_PATH}"
+    q = request.url.query
+    if q:
+        return f"{base}?{q}"
+    return base
+
+
+def _passthrough_url(request: Request, upstream_path: str) -> str:
+    base = f"{AI_BUILDER_BASE}{upstream_path}"
     q = request.url.query
     if q:
         return f"{base}?{q}"
@@ -966,6 +976,26 @@ async def _forward_search_to_ai_builder(payload: dict[str, Any]) -> Response:
     )
 
 
+async def _forward_request_to_ai_builder(
+    request: Request,
+    *,
+    upstream_path: str,
+    method: str,
+) -> Response:
+    url = _passthrough_url(request, upstream_path)
+    headers = _upstream_headers()
+    timeout = httpx.Timeout(120.0, connect=30.0)
+    content = await request.body()
+    async with httpx.AsyncClient(timeout=timeout) as client:
+        upstream = await client.request(method, url, content=content, headers=headers)
+    media_type = upstream.headers.get("content-type", "application/json")
+    return Response(
+        content=upstream.content,
+        status_code=upstream.status_code,
+        media_type=media_type,
+    )
+
+
 @app.post(
     "/search",
     tags=["Search 代理"],
@@ -1023,13 +1053,41 @@ async def search_get(
     return await _forward_search_to_ai_builder(payload)
 
 
+@app.get(
+    "/backend/v1/audio/realtime/protocol",
+    include_in_schema=False,
+)
+async def realtime_protocol_proxy(request: Request) -> Response:
+    return await _forward_request_to_ai_builder(
+        request,
+        upstream_path=REALTIME_PROTOCOL_PATH,
+        method="GET",
+    )
+
+
+@app.post(
+    "/backend/v1/audio/realtime/sessions",
+    include_in_schema=False,
+)
+async def realtime_session_proxy(request: Request) -> Response:
+    return await _forward_request_to_ai_builder(
+        request,
+        upstream_path=REALTIME_SESSION_PATH,
+        method="POST",
+    )
+
+
 STATIC_DIR = Path(__file__).resolve().parent / "static"
-# Next.js static export (`npm run build` in chatgpt-clone); served when present (e.g. Docker / production).
+# Deployment target UI: built `transcriptor-2`.
+TRANSCRIPTOR_2_UI_DIR = Path(__file__).resolve().parent / "transcriptor-2" / "dist"
+# Legacy Next.js static export (`npm run build` in chatgpt-clone); served if present and Transcriptor 2 is absent.
 NEXT_UI_DIR = Path(__file__).resolve().parent / "chatgpt-clone" / "out"
 
 app.mount("/static", StaticFiles(directory=str(STATIC_DIR)), name="static")
 
-if NEXT_UI_DIR.is_dir():
+if TRANSCRIPTOR_2_UI_DIR.is_dir():
+    app.mount("/", StaticFiles(directory=str(TRANSCRIPTOR_2_UI_DIR), html=True), name="transcriptor_2_ui")
+elif NEXT_UI_DIR.is_dir():
     app.mount("/", StaticFiles(directory=str(NEXT_UI_DIR), html=True), name="next_ui")
 else:
 

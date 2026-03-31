@@ -10,11 +10,7 @@ export class ApiError extends Error {
 }
 
 function getBaseUrl(): string {
-  if (import.meta.env.DEV) return "/backend";
-  return (import.meta.env.VITE_AI_BUILDER_BASE_URL || "https://space.ai-builders.com/backend").replace(
-    /\/$/,
-    "",
-  );
+  return "/backend";
 }
 
 function getToken(): string {
@@ -54,7 +50,8 @@ export async function apiFetch(path: string, init: RequestInit = {}): Promise<Re
 }
 
 export function getApiConfig(): { hasToken: boolean } {
-  return { hasToken: Boolean(getToken()) };
+  if (import.meta.env.DEV) return { hasToken: Boolean(getToken()) };
+  return { hasToken: true };
 }
 
 /** Build WebSocket URL for realtime (dev: proxied /backend; prod: wss to API host). */
