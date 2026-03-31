@@ -1,0 +1,6 @@
+{
+  "repo_url": "https://github.com/RoyChung/test",
+  "service_name": "your-unique-name-here",
+  "branch": "main",
+  "port": 8000
+}

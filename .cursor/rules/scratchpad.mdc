@@ -142,3 +142,40 @@ When you get a new task, plan here and track progress with `[X]` / `[ ]`. Update
 - [X] Edit user messages: hover **Edit** → **Save & resend** truncates history after that message and streams a new reply; editing the only user message regenerates the title
 - [X] Assistant Markdown → rendered DOM (GFM tables, emphasis, etc.) + `rehype-raw` + `rehype-sanitize` for safe inline HTML in replies
 - [X] All chat turns → FastAPI `/v1/chat/agent` (model chooses tools); title `POST /v1/chat/completions`; Next static export in `chatgpt-clone/out` mounted at `/` when present; Dockerfile + `.dockerignore` for ai-builders.space deploy
+- [X] Git: removed nested `chatgpt-clone/.git`; `.gitignore` extended (`Stage/`, `.obsidian/`, `.DS_Store`, Next build dirs); index re-staged so `chatgpt-clone/**` files track normally
+
+## AI Builder Space deployment (completed)
+- [X] `deploy-config.example.json` + `tools/deploy_to_space.py` (Bearer `AI_BUILDER_TOKEN`, POST `/v1/deployments`); `deploy-config.json` gitignored
+- [X] Local `deploy-config.json` → `service_name` `roychung-cursor-chat`, repo `RoyChung/test` branch `main`; deploy API returned `status: deploying`, public URL `https://roychung-cursor-chat.ai-builders.space/` (wait 5–10 min after trigger)
+
+## Transcriptor! MVP (completed)
+- [X] `transcriptor/` — React + Vite + TypeScript + Tailwind; `index.html` entry; dev **http://localhost:5185** (`strictPort`); proxy `/backend` + `ws: true`
+- [X] API `src/api/` (`client`, `realtimeSession`); hooks `useRealtimeTranscription`; `features/transcribe/TranscribePage`
+- [X] `POST /v1/audio/realtime/sessions` → WebSocket PCM16@24k; env from repo root `.env` `AI_BUILDER_TOKEN` via `vite.config.ts` `define`
+- [X] Mount auto-connect → Live; Record/Stop; transcript **this take only** (no accumulation); Copy; focus/visibility reconnect when offline; Stop sends `{type:"stop"}` only (connection stays); `.gitignore` `transcriptor/node_modules`, `dist`
+- [X] Replay: buffer PCM16@24kHz chunks during recording → WAV blob + `<audio controls>` for last take; revoke object URLs on new take / unmount (`lib/wav.ts`)
+- [X] Second-pass button: stream last-take WAV PCM over existing realtime WebSocket (`/v1/audio/realtime/sessions`); no `POST /v1/audio/transcriptions`; `wavBlobToMonoPcm16` + replay transcript buffer
+
+## Transcriptor 1 / 2 / 3 (completed)
+- [X] `transcriptor-1/` — Transcriptor 1 (cloud batch STT), dev **http://localhost:5181** (`strictPort`); renamed from `transcriptor/`
+- [X] `transcriptor-2/` — Transcriptor 2 (realtime WebSocket), **http://localhost:5182**, proxy `ws: true`
+- [X] `transcriptor-3/` — Transcriptor 3 (local Whisper + OpenCC), **http://localhost:5183**, no token
+- [X] `.gitignore` updated for all three; run each: `cd transcriptor-N && npm run dev`
+- [X] T3 `config.json` / `<!doctype`: `env.useBrowserCache = false` + `caches.delete('transformers-cache')`; reset `transcriberPromise` on error + clear so retries reload; `configureTransformersEnv()` before `pipeline()`
+
+## Transcriptor 2 UX (completed)
+- [X] 錄音期間唔顯示字；Stop 後約 2.5s 合併顯示今次 Start–Stop 轉寫；Stop 後閒置 5 分鐘斷 WebSocket；同一條線 OPEN 時再「錄音」可重用（唔再 POST session）
+- [X] `buffer too small` / 0ms：session `vad: false`；音訊圖建立後立即送 120ms 靜音 PCM16@24k；等 `AudioContext` running
+- [X] WS `type: "error"` 可恢復（例如 commit 時 buffer too small）— 唔設 `connectionState` error／`setError`；`isRecoverableRealtimeWsError` + DEV `console.warn`
+
+## Transcriptor 2 connect on load + Live indicator + focus reconnect (completed)
+- [X] `hasToken` 時 mount 即 `connectWebSocket()`（POST + WS + `session_ready`）；`connectionState`：`disconnected` | `connecting` | `ready` | `error`；`isRecording` 與連線分開
+- [X] `RealtimePage`：Live / 連接中 / 離線 / 連線錯誤 indicator；`window` `focus` 時若 `disconnected` 或 `error` 且非錄音則重連；`onclose` 僅當 `wsRef.current === ws` 時更新狀態（避免重連時舊 socket 蓋掉 `ready`）
+- [X] Stop 後若後端關 WS：`onclose` 即 `connecting` + `connectWebSocket()`，唔經過「離線」；`reconnectAfterUserStopRef` + 8s 清 flag
+- [X] Transcriptor 2：只 HTTP `POST /v1/audio/realtime/sessions`；`applyTranscriptMessage` 錄音中即 `setDisplayText`；UI 標「即時轉寫」
+- [X] T2：`GET /v1/audio/realtime/protocol`（`fetchRealtimeProtocol`）與 session 並行；WS：`start`→PCM→`commit`→`stop`（`api/realtimeProtocol.ts`）
+- [X] T2：錄音時 **Freeze / Unfreeze** — 暫停 `setDisplayText`（pending 仍累積）；`start`/`stop` 重設 frozen
+- [X] 連線只由「視窗可見 + `document.hasFocus()`」觸發（`focus` + `visibilitychange` + rAF）；唔再 mount 自動連線；`start()` 唔再 `connectWebSocket`，錄音掣要 `ready` 先可用
+
+## Transcriptor 三合一比較 (completed)
+- [X] `transcriptor-compare/` — 單一錄音，並行雲端批次 + 雲端即時（WS 回放 PCM）+ 本機 Whisper；三欄結果、各欄回應時間、🥇🥈🥉 速度排名；dev **http://localhost:5184**；`AI_BUILDER_TOKEN` 同 T1/T2

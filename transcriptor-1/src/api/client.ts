@@ -1,0 +1,79 @@
+/**
+ * Single place for base URL, auth headers, and HTTP error handling.
+ */
+
+export class ApiError extends Error {
+  constructor(
+    public readonly status: number,
+    message: string,
+    public readonly body?: string,
+  ) {
+    super(message);
+    this.name = "ApiError";
+  }
+}
+
+function getBaseUrl(): string {
+  if (import.meta.env.DEV) {
+    return "/backend";
+  }
+  return (import.meta.env.VITE_AI_BUILDER_BASE_URL || "https://space.ai-builders.com/backend").replace(
+    /\/$/,
+    "",
+  );
+}
+
+function getToken(): string {
+  return import.meta.env.VITE_AI_BUILDER_TOKEN || "";
+}
+
+function buildHeaders(init: RequestInit): Headers {
+  const headers = new Headers(init.headers);
+  const token = getToken();
+  if (token) {
+    headers.set("Authorization", `Bearer ${token}`);
+  }
+  if (init.body && !(init.body instanceof FormData)) {
+    if (!headers.has("Content-Type")) {
+      headers.set("Content-Type", "application/json");
+    }
+  }
+  return headers;
+}
+
+/**
+ * Authenticated fetch against the AI Builder backend. Preserves FormData (no Content-Type override).
+ */
+export async function apiFetch(path: string, init: RequestInit = {}): Promise<Response> {
+  const base = getBaseUrl();
+  const url = path.startsWith("http") ? path : `${base}${path.startsWith("/") ? "" : "/"}${path}`;
+  const res = await fetch(url, {
+    ...init,
+    headers: buildHeaders(init),
+  });
+
+  if (!res.ok) {
+    const text = await res.text();
+    let message = `Request failed (${res.status})`;
+    try {
+      const j = JSON.parse(text) as { detail?: unknown };
+      if (Array.isArray(j.detail)) {
+        message = j.detail.map((d: { msg?: string }) => d.msg ?? "").filter(Boolean).join("; ") || message;
+      } else if (typeof j.detail === "string") {
+        message = j.detail;
+      }
+    } catch {
+      if (text) message = text.slice(0, 500);
+    }
+    throw new ApiError(res.status, message, text);
+  }
+
+  return res;
+}
+
+export function getApiConfig(): { baseUrl: string; hasToken: boolean } {
+  return {
+    baseUrl: getBaseUrl(),
+    hasToken: Boolean(getToken()),
+  };
+}

@@ -1,5 +1,6 @@
 # Secrets and credentials (never commit)
 .env
+deploy-config.json
 .secrets/
 credentials.json
 token.json
@@ -19,3 +20,15 @@ Stage/
 chatgpt-clone/node_modules/
 chatgpt-clone/.next/
 chatgpt-clone/out/
+
+# Vite (Transcriptor 1–3)
+transcriptor-1/node_modules/
+transcriptor-1/dist/
+transcriptor-2/node_modules/
+transcriptor-2/dist/
+transcriptor-3/node_modules/
+transcriptor-3/dist/
+transcriptor-compare/node_modules/
+transcriptor-compare/dist/
+transcriptor/node_modules/
+transcriptor/dist/
