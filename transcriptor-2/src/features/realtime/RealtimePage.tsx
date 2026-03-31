@@ -1,12 +1,33 @@
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 import { getApiConfig } from "@/api/client";
-import { useRealtimeTranscription } from "@/hooks/useRealtimeTranscription";
+import {
+  REALTIME_POST_STOP_ACCEPT_MS,
+  useRealtimeTranscription,
+} from "@/hooks/useRealtimeTranscription";
 import { toTraditionalChinese } from "@/lib/toTraditionalChinese";
 
 function IconPlay({ className }: { className?: string }) {
   return (
     <svg className={className} viewBox="0 0 24 24" fill="currentColor" aria-hidden>
       <path d="M8 5.14v13.72c0 .81.86 1.33 1.58.94l11-6.86a1.05 1.05 0 0 0 0-1.78l-11-6.86A1.05 1.05 0 0 0 8 5.14z" />
+    </svg>
+  );
+}
+
+function formatClockMs(ms: number): string {
+  return new Date(ms).toLocaleTimeString(undefined, {
+    hour: "2-digit",
+    minute: "2-digit",
+    second: "2-digit",
+    fractionalSecondDigits: 3,
+  });
+}
+
+function IconSpinner({ className }: { className?: string }) {
+  return (
+    <svg className={className} viewBox="0 0 24 24" fill="none" aria-hidden>
+      <circle cx="12" cy="12" r="9" className="opacity-25" stroke="currentColor" strokeWidth="3" />
+      <path className="opacity-100" fill="currentColor" d="M12 3a9 9 0 0 1 9 9h-3a6 6 0 0 0-6-6V3z" />
     </svg>
   );
 }
@@ -24,6 +45,7 @@ export function RealtimePage() {
   const {
     connectionState,
     connectionUiState,
+    finalizeState,
     isRecording,
     displayText,
     liveDisplayText,
@@ -31,11 +53,51 @@ export function RealtimePage() {
     start,
     stop,
     clearTranscript,
-    clearLiveTranscript,
+    lastStopAtMs,
+    afterStopTranscriptUpdatedAtMs,
   } = useRealtimeTranscription();
 
   const [transcriptDisplay, setTranscriptDisplay] = useState("");
   const [liveTranscriptDisplay, setLiveTranscriptDisplay] = useState("");
+  const [copyFlash, setCopyFlash] = useState<"live" | "after" | null>(null);
+  const copyFlashTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const flashCopy = useCallback((which: "live" | "after") => {
+    if (copyFlashTimerRef.current) clearTimeout(copyFlashTimerRef.current);
+    setCopyFlash(which);
+    copyFlashTimerRef.current = setTimeout(() => {
+      setCopyFlash(null);
+      copyFlashTimerRef.current = null;
+    }, 2000);
+  }, []);
+
+  const copyLiveTranscript = useCallback(async () => {
+    const text = liveTranscriptDisplay.trim();
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      flashCopy("live");
+    } catch {
+      // Clipboard may be denied; ignore.
+    }
+  }, [liveTranscriptDisplay, flashCopy]);
+
+  const copyAfterStopTranscript = useCallback(async () => {
+    const text = transcriptDisplay.trim();
+    if (!text) return;
+    try {
+      await navigator.clipboard.writeText(text);
+      flashCopy("after");
+    } catch {
+      // Clipboard may be denied; ignore.
+    }
+  }, [transcriptDisplay, flashCopy]);
+
+  useEffect(() => {
+    return () => {
+      if (copyFlashTimerRef.current) clearTimeout(copyFlashTimerRef.current);
+    };
+  }, []);
 
   useEffect(() => {
     let cancelled = false;
@@ -67,17 +129,20 @@ export function RealtimePage() {
     };
   }, [liveDisplayText]);
 
-  const canStartRecording = hasToken && connectionState === "ready";
+  const isWaitingForFirstTranscript = finalizeState === "waiting_first";
+  const isFinalizing = finalizeState !== "idle";
+  const canStartRecording = hasToken && connectionState === "ready" && !isFinalizing;
 
   const onPrimary = useCallback(async () => {
     if (isRecording) {
       stop();
       return;
     }
+    if (isFinalizing) return;
     if (connectionState === "connecting") return;
     if (!canStartRecording) return;
     await start();
-  }, [canStartRecording, connectionState, isRecording, start, stop]);
+  }, [canStartRecording, connectionState, isFinalizing, isRecording, start, stop]);
 
   const connectionLabel =
     connectionUiState === "ready"
@@ -98,7 +163,7 @@ export function RealtimePage() {
           : "bg-slate-500";
 
   const primaryDisabled =
-    !hasToken || connectionState === "connecting" || (!isRecording && !canStartRecording);
+    !hasToken || connectionState === "connecting" || isFinalizing || (!isRecording && !canStartRecording);
 
   return (
     <div className="mx-auto flex min-h-screen max-w-2xl flex-col px-4 pb-16 pt-12 sm:px-6">
@@ -140,15 +205,28 @@ export function RealtimePage() {
             type="button"
             onClick={onPrimary}
             disabled={primaryDisabled}
-            aria-label={isRecording ? "Stop recording" : "Start recording"}
+            aria-label={isRecording ? "Stop recording" : isWaitingForFirstTranscript ? "Finalizing transcript" : "Start recording"}
             className={
               isRecording
                 ? "flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-red-600 text-white shadow-lg shadow-red-900/30 transition hover:bg-red-500 disabled:opacity-50"
+                : isWaitingForFirstTranscript
+                  ? "flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white shadow-lg shadow-amber-900/30 transition disabled:opacity-100"
                 : "flex h-16 w-16 shrink-0 items-center justify-center rounded-full bg-emerald-600 text-white shadow-lg shadow-emerald-900/30 transition hover:bg-emerald-500 disabled:opacity-50"
             }
           >
-            {isRecording ? <IconStopSquare className="h-7 w-7" /> : <IconPlay className="ml-0.5 h-8 w-8" />}
+            {isRecording ? (
+              <IconStopSquare className="h-7 w-7" />
+            ) : isWaitingForFirstTranscript ? (
+              <IconSpinner className="h-8 w-8 animate-spin" />
+            ) : (
+              <IconPlay className="ml-0.5 h-8 w-8" />
+            )}
           </button>
+          {isFinalizing && (
+            <p className="w-full text-center text-xs text-slate-500">
+              {isWaitingForFirstTranscript ? "Finalizing transcript..." : "Transcript is still updating..."}
+            </p>
+          )}
         </div>
 
         <section className="w-full space-y-3">
@@ -156,11 +234,12 @@ export function RealtimePage() {
             <p className="text-2xs font-medium uppercase tracking-wider text-emerald-400/90">Transcript 2 · Live</p>
             <button
               type="button"
-              onClick={clearLiveTranscript}
-              disabled={isRecording || !liveDisplayText}
+              onClick={copyLiveTranscript}
+              disabled={!liveTranscriptDisplay.trim()}
+              aria-label="Copy live transcript"
               className="rounded-lg border border-emerald-500/30 bg-emerald-950/40 px-3 py-1.5 text-2xs font-medium text-slate-200 hover:bg-emerald-900/50 disabled:pointer-events-none disabled:opacity-40"
             >
-              Clear
+              {copyFlash === "live" ? "Copied" : "Copy"}
             </button>
           </div>
           <div
@@ -192,44 +271,67 @@ export function RealtimePage() {
         <section className="w-full space-y-3">
           <div className="flex flex-wrap items-center justify-between gap-2">
             <p className="text-2xs font-medium uppercase tracking-wider text-slate-500">Transcript · After stop</p>
-            <button
-              type="button"
-              onClick={clearTranscript}
-              disabled={isRecording || !displayText}
-              className="rounded-lg border border-surface-border bg-surface-raised/80 px-3 py-1.5 text-2xs font-medium text-slate-300 hover:bg-surface-border/80 disabled:pointer-events-none disabled:opacity-40"
-            >
-              Clear
-            </button>
+            <div className="flex flex-wrap items-center gap-2">
+              <button
+                type="button"
+                onClick={copyAfterStopTranscript}
+                disabled={!transcriptDisplay.trim()}
+                aria-label="Copy after-stop transcript"
+                className="rounded-lg border border-surface-border bg-surface-raised/80 px-3 py-1.5 text-2xs font-medium text-slate-300 hover:bg-surface-border/80 disabled:pointer-events-none disabled:opacity-40"
+              >
+                {copyFlash === "after" ? "Copied" : "Copy"}
+              </button>
+              <button
+                type="button"
+                onClick={clearTranscript}
+                disabled={isRecording || isFinalizing || !displayText}
+                className="rounded-lg border border-surface-border bg-surface-raised/80 px-3 py-1.5 text-2xs font-medium text-slate-300 hover:bg-surface-border/80 disabled:pointer-events-none disabled:opacity-40"
+              >
+                Clear
+              </button>
+            </div>
           </div>
+          {lastStopAtMs != null && (
+            <p className="text-2xs leading-relaxed text-slate-500 tabular-nums">
+              <span className="font-medium text-slate-400">Stop</span> {formatClockMs(lastStopAtMs)}
+              {afterStopTranscriptUpdatedAtMs != null &&
+                Math.abs(afterStopTranscriptUpdatedAtMs - lastStopAtMs) > 250 && (
+                  <>
+                    {" "}
+                    <span className="text-slate-600">·</span>{" "}
+                    <span className="font-medium text-slate-400">Last text update</span>{" "}
+                    {formatClockMs(afterStopTranscriptUpdatedAtMs)}
+                    <span className="text-slate-600">
+                      {" "}
+                      (+{(afterStopTranscriptUpdatedAtMs - lastStopAtMs).toFixed(0)} ms)
+                    </span>
+                  </>
+                )}
+              <span className="mt-1 block text-slate-600">
+                If a pending snapshot exists, it appears immediately after Stop. Otherwise the button waits for the first
+                result; once text appears, this box may keep refining in the background for up to{" "}
+                {REALTIME_POST_STOP_ACCEPT_MS / 1000} s.
+              </span>
+            </p>
+          )}
           <div
             className="min-h-[8rem] rounded-xl border border-surface-border bg-surface-raised/80 p-4 text-[15px] leading-relaxed text-slate-100"
             aria-live="polite"
             aria-relevant="additions text"
           >
-            {connectionUiState === "connecting" && !isRecording && (
-              <p className="text-sm text-slate-500">Connecting…</p>
-            )}
-            {connectionUiState === "ready" && !isRecording && !displayText && (
+            {isWaitingForFirstTranscript && !displayText && <p className="text-sm text-slate-500">Finalizing transcript...</p>}
+            {connectionUiState === "ready" && !isRecording && !displayText && !isWaitingForFirstTranscript && (
               <p className="text-sm text-slate-500">Transcription will appear here.</p>
             )}
-            {(connectionUiState === "disconnected" || connectionUiState === "error") && !isRecording && (
+            {(connectionUiState === "disconnected" || connectionUiState === "error") && !isRecording && !isFinalizing && (
               <p className="text-sm text-slate-500">Not connected. Focus this tab, then press Record when you see Ready.</p>
             )}
-            {isRecording && (
-              <p className="text-sm text-slate-500">
-                Recording… The full transcript will appear here after you press Stop (live preview is above).
-              </p>
-            )}
+            {isRecording && <p className="text-sm text-slate-500">Listening…</p>}
             {!isRecording && displayText ? (
               <p className="min-h-[1.25rem] whitespace-normal break-words" lang="zh-Hant-HK">
                 {transcriptDisplay}
               </p>
             ) : null}
-            {connectionState === "ready" && !isRecording && displayText && (
-              <p className="mt-3 text-2xs text-slate-500">
-                Your last result is shown above. Press the green button again to clear and start a new take.
-              </p>
-            )}
           </div>
         </section>
       </div>

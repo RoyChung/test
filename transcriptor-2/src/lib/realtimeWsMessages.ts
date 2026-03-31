@@ -7,28 +7,38 @@ export type TranscriptParts = {
   deltaOnly: string | null;
 };
 
+export type ExtractTranscriptPartsOptions = {
+  transcriptOnly?: boolean;
+  allowText?: boolean;
+};
+
 function isNonEmptyString(v: unknown): v is string {
   return typeof v === "string" && v.length > 0;
 }
 
 /** Walk common shapes: root, data, item, content[], response, result */
-export function extractTranscriptParts(msg: Record<string, unknown>): TranscriptParts {
+export function extractTranscriptParts(
+  msg: Record<string, unknown>,
+  options: ExtractTranscriptPartsOptions = {},
+): TranscriptParts {
   let fullText: string | null = null;
   let deltaOnly: string | null = null;
+  const transcriptOnly = options.transcriptOnly === true;
+  const allowText = options.allowText === true || !transcriptOnly;
 
   const tryObj = (o: Record<string, unknown>) => {
-    if (!fullText && isNonEmptyString(o.text)) fullText = o.text;
     if (!fullText && isNonEmptyString(o.transcript)) fullText = o.transcript;
-    if (!fullText && typeof o.content === "string" && o.content.length > 0) fullText = o.content;
+    if (allowText && !fullText && isNonEmptyString(o.text)) fullText = o.text;
+    if (!transcriptOnly && !fullText && typeof o.content === "string" && o.content.length > 0) fullText = o.content;
     if (!deltaOnly && isNonEmptyString(o.delta)) deltaOnly = o.delta;
 
     const item = o.item;
     if (item && typeof item === "object") {
       const it = item as Record<string, unknown>;
       if (!fullText && isNonEmptyString(it.transcript)) fullText = it.transcript;
-      if (!fullText && isNonEmptyString(it.text)) fullText = it.text;
+      if (allowText && !fullText && isNonEmptyString(it.text)) fullText = it.text;
       const content = it.content;
-      if (Array.isArray(content)) {
+      if (!transcriptOnly && Array.isArray(content)) {
         for (const c of content) {
           if (typeof c === "string" && c.length > 0 && !fullText) {
             fullText = c;
@@ -44,22 +54,22 @@ export function extractTranscriptParts(msg: Record<string, unknown>): Transcript
     const response = o.response;
     if (response && typeof response === "object") {
       const r = response as Record<string, unknown>;
-      if (!fullText && isNonEmptyString(r.text)) fullText = r.text;
       if (!fullText && isNonEmptyString(r.transcript)) fullText = r.transcript;
+      if (allowText && !fullText && isNonEmptyString(r.text)) fullText = r.text;
     }
 
     const result = o.result;
     if (result && typeof result === "object") {
       const r = result as Record<string, unknown>;
-      if (!fullText && isNonEmptyString(r.text)) fullText = r.text;
       if (!fullText && isNonEmptyString(r.transcript)) fullText = r.transcript;
+      if (allowText && !fullText && isNonEmptyString(r.text)) fullText = r.text;
     }
   };
 
   tryObj(msg);
 
   const rootContent = msg.content;
-  if (Array.isArray(rootContent) && rootContent.length > 0 && !fullText) {
+  if (!transcriptOnly && Array.isArray(rootContent) && rootContent.length > 0 && !fullText) {
     const parts: string[] = [];
     for (const c of rootContent) {
       if (typeof c === "string") parts.push(c);

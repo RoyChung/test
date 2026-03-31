@@ -184,3 +184,24 @@ When you get a new task, plan here and track progress with `[X]` / `[ ]`. Update
 
 ## Transcriptor 三合一比較 (completed)
 - [X] `transcriptor-compare/` — 單一錄音，並行雲端批次 + 雲端即時（WS 回放 PCM）+ 本機 Whisper；三欄結果、各欄回應時間、🥇🥈🥉 速度排名；dev **http://localhost:5184**；`AI_BUILDER_TOKEN` 同 T1/T2
+
+## Transcriptor 2 hallucination filter
+- [X] Tighten post-stop transcript extraction to transcript-like fields only
+- [X] Ignore broad neutral late events for after-stop transcript
+- [X] Verify edited files stay lint-clean
+
+## Transcriptor 2 finalize UX
+- [X] Add post-stop finalize states: waiting for first result vs refining
+- [X] Show loading on primary button only until the first transcript arrives
+- [X] Keep after-stop transcript refining in background with updated timeouts
+- [X] Verify edited files stay lint-clean
+
+## Transcriptor 2 finalize timeout tuning
+- [X] Increase first-result wait time after Stop
+- [X] Increase overall post-stop finalize window
+- [X] Verify edited files stay lint-clean
+
+## Transcriptor 2 final text recovery
+- [X] Allow post-stop final/completed events to read `text`
+- [X] Keep neutral post-stop events restricted to avoid hallucination
+- [X] Verify edited files stay lint-clean
